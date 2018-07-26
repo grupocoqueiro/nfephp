@@ -3,7 +3,7 @@
 namespace NFePHP\Common\Files;
 
 /**
- * Classe auxiliar para criar, listar e testar os diretórios utilizados pela API
+ * Classe auxiliar para criar, listar e testar os diret�rios utilizados pela API
  *
  * @category  NFePHP
  * @package   NFePHP\Common\Files
@@ -57,10 +57,12 @@ class FilesFolders
     
     /**
      * getFilePath
+     *
      * @param  string $tpAmb
      * @param  string $dirbase
      * @param  string $subdir
      * @return string
+     * @throws Exception\RuntimeException
      */
     public static function getFilePath($tpAmb = '2', $dirbase = '', $subdir = '')
     {
@@ -69,13 +71,11 @@ class FilesFolders
             . self::getAmbiente($tpAmb)
             . DIRECTORY_SEPARATOR
             . $subdir;
-        if (!is_dir($path)) {
-            if (!mkdir($path, 0777, true)) {
-                throw new Exception\RuntimeException(
-                    "Não foi possivel criar o diretorio $folder. Verifique as permissões"
-                );
-            }
-        }    
+        
+        if (! is_dir($path)) {
+            $msg = "N�o existe o diretorio $path !";
+            throw new Exception\RuntimeException($msg);
+        }
         return $path;
     }
     
@@ -87,9 +87,9 @@ class FilesFolders
      * @return boolean
      * @throws Exception\RuntimeException
      */
-    public static function createFolders($dirPath)
+    public static function createFolders($dirPath = '')
     {
-        //monta a arvore de diretórios necessária e estabelece permissões de acesso
+        //monta a arvore de diret�rios necessária e estabelece permissões de acesso
         self::createFolder($dirPath);
         foreach (self::$ambientes as $ambiente) {
             $folder = $dirPath.DIRECTORY_SEPARATOR.$ambiente;
@@ -104,15 +104,16 @@ class FilesFolders
     
     /**
      * createFolder
+     *
      * @param  string $folder
      * @throws Exception\RuntimeException
      */
-    public static function createFolder($folder)
+    public static function createFolder($folder = '')
     {
         if (! is_dir($folder)) {
             if (! mkdir($folder, 0777)) {
                 throw new Exception\RuntimeException(
-                    "Não foi possivel criar o diretorio $folder. Verifique as permissões"
+                    "N�o foi possivel criar o diretorio $folder. Verifique as permissões"
                 );
             }
         }
@@ -120,6 +121,7 @@ class FilesFolders
     
     /**
      * saveFile
+     *
      * @param  string $path
      * @param  string $filename
      * @param  string $content
@@ -141,8 +143,9 @@ class FilesFolders
     /**
      * listDir
      * Obtem todo o conteúdo de um diretorio, e que atendam ao critério indicado.
+     *
      * @param  string  $dir       Diretorio a ser pesquisado
-     * @param  string  $fileMatch Critério de seleção pode ser usados coringas como *-nfe.xml
+     * @param  string  $fileMatch Critério de seleç�o pode ser usados coringas como *-nfe.xml
      * @param  boolean $retpath   se true retorna o path completo dos arquivos se false so retorna o nome dos arquivos
      * @return array com os nome dos arquivos que atendem ao critério estabelecido ou false
      * @throws Exception\InvalidArgumentException
@@ -151,12 +154,12 @@ class FilesFolders
     {
         if ($folder == '' || $fileMatch == '') {
             throw new Exception\InvalidArgumentException(
-                "É necessário passar os parametros diretório e filtro!!!"
+                "É necessário passar os parametros diret�rio e filtro!!!"
             );
         }
         if (! is_dir($folder)) {
             throw new Exception\InvalidArgumentException(
-                "O diretório não existe $folder !!!"
+                "O diret�rio n�o existe $folder !!!"
             );
         }
         $aList = array();
@@ -178,7 +181,7 @@ class FilesFolders
     
     /**
      * Rotina para teste de escrita no path especificado
-     * Usada na rotina de configuração (install.php)
+     * Usada na rotina de configuraç�o (install.php)
      *
      * @param  string $path
      * @param  string $message
@@ -226,13 +229,13 @@ class FilesFolders
             } else {
                 if (! unlink("$dirPath/$file")) {
                     throw new Exception\RuntimeException(
-                        "Falha! sem permissão de exclusão do arquivo $dirPath/$file"
+                        "Falha! sem permiss�o de exclus�o do arquivo $dirPath/$file"
                     );
                 }
             }
         }
         if (! rmdir($dirPath)) {
-            $msg = "Falha! sem permissão de exclusão do diretório $dirPath";
+            $msg = "Falha! sem permiss�o de exclus�o do diret�rio $dirPath";
             throw new Exception\RuntimeException($msg);
         }
         return true;
@@ -253,11 +256,11 @@ class FilesFolders
             throw new Exception\InvalidArgumentException($msg);
         }
         if (! is_file($pathFile)) {
-            $msg = "O arquivo indicado não foi localizado!! $pathFile";
+            $msg = "O arquivo indicado n�o foi localizado!! $pathFile";
             throw new Exception\InvalidArgumentException($msg);
         }
         if (! is_readable($pathFile)) {
-            $msg = "O arquivo indicado não pode ser lido. Permissões!! $pathFile";
+            $msg = "O arquivo indicado n�o pode ser lido. Permissões!! $pathFile";
             throw new Exception\RuntimeException($msg);
         }
         return file_get_contents($pathFile);

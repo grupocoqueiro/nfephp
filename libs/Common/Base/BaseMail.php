@@ -61,7 +61,7 @@ class BaseMail
     
     /**
      * __construct
-     * M√©todo construtor configura o transporte do email
+     * M‚©todo construtor configura o transporte do email
      *
      * @param  type $aMailConf
      * @throws Exception\InvalidArgumentException
@@ -69,7 +69,7 @@ class BaseMail
     public function __construct($aMailConf = array())
     {
         if (count($aMailConf) == 0) {
-            $msg = 'Os par√¢metros de configura√ß√£o para email devem ser passados em um array.';
+            $msg = 'Os par‚¢metros de configuraÁ„o para email devem ser passados em um array.';
             throw new Exception\InvalidArgumentException($msg);
         }
         $this->aMailConf = $aMailConf;
@@ -116,15 +116,36 @@ class BaseMail
      */
     public function addAttachment($pathFile = '', $filename = '')
     {
+    	$filename = $filename ?: uniqid() . date('YmdHis');
         $filename = self::zRemakeFilename($pathFile, $filename);
+       
+        
+        if ( !is_file($pathFile) ) {
+        	if ( !is_dir('tmp') ) {
+        		mkdir(getcwd() . DIRECTORY_SEPARATOR . 'tmp', 0777, true);
+	        	chmod(getcwd() . DIRECTORY_SEPARATOR . 'tmp', 0777);
+        	}
+        	$filename = 'tmp' . DIRECTORY_SEPARATOR . $filename.'.xml';
+        	$file = fopen($filename, 'w');
+        	fwrite($file, $pathFile);
+        	fclose($file);
+        }
+
         $fInfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mimeType = finfo_file($fInfo, $pathFile);
-        $attachment = new MimePart(fopen($pathFile, 'r'));
+
+        $mimeType = finfo_file($fInfo, $filename);
+        $file = fopen($filename, 'r');
+        $attachment = new MimePart($file);
         $attachment->type = $mimeType;
         $attachment->encoding    = Mime::ENCODING_BASE64;
         $attachment->disposition = Mime::DISPOSITION_ATTACHMENT;
         $attachment->filename = $filename;
         $this->aAttachments[] = $attachment;
+        
+        if ( !is_file($pathFile) ) {
+        	fclose($file);
+        	unlink(getcwd() . DIRECTORY_SEPARATOR . $filename);
+        }
     }
    
     /**
@@ -143,7 +164,7 @@ class BaseMail
         $textPart = new MimePart($msgTxt);
         $textPart->encoding = Mime::ENCODING_QUOTEDPRINTABLE;
         $textPart->type = "text/plain; charset=UTF-8";
-        //monatgem do conte√∫do da mensagem
+        //monatgem do conte‚∫do da mensagem
         $this->content = new MimeMessage();
         $this->content->addPart($textPart);
         $this->content->addPart($htmlPart);
@@ -159,12 +180,13 @@ class BaseMail
     {
         $message = new Message();
         $message->setEncoding("UTF-8");
+    
         $message->setFrom(
             $this->aMailConf['mailFromMail'],
             $this->aMailConf['mailFromName']
         );
         foreach ($aMail as $mail) {
-            //destinat√°rios
+            //destinat‚°rios
             $message->addTo($mail);
         }
         //assunto
@@ -194,7 +216,7 @@ class BaseMail
     
     /**
      * zRemakeFilename
-     * Caso n√£o seja passado um nome de arquivo ent√£o
+     * Caso n‚£o seja passado um nome de arquivo ent‚£o
      * pega o nome do arquivo do path
      *
      * @param  string $pathFile

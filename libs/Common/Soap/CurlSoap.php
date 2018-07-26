@@ -13,8 +13,11 @@ namespace NFePHP\Common\Soap;
  * @link      http://github.com/nfephp-org/nfephp for the canonical source repository
  */
 
+use App\Config\Configure;
 use NFePHP\Common\Strings\Strings;
 use NFePHP\Common\Exception;
+use NFePHP\Common\Certificate\Pkcs12;
+use App\Exception\UserException;
 
 class CurlSoap
 {
@@ -98,6 +101,10 @@ class CurlSoap
      */
     private $sslProtocol = 0;
     
+    private $priKey;
+    private $pubKey;
+    private $certKey;
+    
     /**
      * __construct
      *
@@ -107,20 +114,31 @@ class CurlSoap
      * @param string  $timeout     tempo de espera da resposta do webservice
      * @param integer $sslProtocol
      */
-    public function __construct($priKeyPath = '', $pubKeyPath = '', $certKeyPath = '', $timeout = 10, $sslProtocol = 0)
+    public function __construct($priKeyPath = '', $pubKeyPath = '', $certKeyPath = '', $timeout = 10, $sslProtocol = 0, $usePath = true, Pkcs12 $objPkcs12 = null)
     {
         $this->priKeyPath = $priKeyPath;
         $this->pubKeyPath = $pubKeyPath;
         $this->certKeyPath = $certKeyPath;
         $this->soapTimeout = $timeout;
         if ($sslProtocol < 0 || $sslProtocol > 6) {
-            $msg = "O protocolo SSL pode estar entre 0 e seis, inclusive, mas n√£o al√©m desses n√∫meros.";
+            $msg = "O protocolo SSL pode estar entre 0 e seis, inclusive, mas n„o al√©m desses n√∫meros.";
             throw new Exception\InvalidArgumentException($msg);
         }
         $this->sslProtocol = $sslProtocol;
-        if (! is_file($priKeyPath) || ! is_file($pubKeyPath) || ! is_file($certKeyPath) || ! is_numeric($timeout)) {
-            $msg = "Alguns dos certificados n√£o foram encontrados ou o timeout pode n√£o ser num√©rico.";
-            throw new Exception\InvalidArgumentException($msg);
+       
+        if ($usePath) {
+            if (! is_file($priKeyPath) || ! is_file($pubKeyPath) || ! is_file($certKeyPath) || ! is_numeric($timeout)) {
+            	$msg = "Alguns dos certificados n„o foram encontrados ou o timeout pode n„o ser num√©rico.";
+            	throw new Exception\InvalidArgumentException($msg);
+            }
+        }else{
+            if (! $objPkcs12) {
+                throw new \Exception('O objeto Pkcs12 n„o foi passado!' . __METHOD__ );
+            }
+            
+            $this->priKey = $objPkcs12->priKey;
+            $this->pubKey = $objPkcs12->pubKey;
+            $this->certKey = $objPkcs12->certKey;
         }
     }
     
@@ -130,7 +148,7 @@ class CurlSoap
      *
      * @param  string $ipNumber numero IP do proxy server
      * @param  string $port     numero da porta usada pelo proxy
-     * @param  string $user     nome do usu√°rio do proxy
+     * @param  string $user     nome do usu·rio do proxy
      * @param  string $pass     senha de acesso ao proxy
      * @return boolean
      */
@@ -144,7 +162,7 @@ class CurlSoap
     
     /**
      * getProxy
-     * Retorna os dados de configura√ß√£o do Proxy em um array
+     * Retorna os dados de configuraÁ„o do Proxy em um array
      *
      * @return array
      */
@@ -190,17 +208,28 @@ class CurlSoap
             'Content-Type: application/soap+xml;charset=utf-8',
             'SOAPAction: "'.$method.'"',
             "Content-length: $tamanho");
-        //solicita comunica√ß√£o via cURL
+        //solicita comunicaÁ„o via cURL
         $resposta = $this->zCommCurl($urlservice, $data, $parametros);
         if (empty($resposta)) {
-            $msg = "N√£o houve retorno do Curl.\n $this->errorCurl";
+        	if ( strpos(strtolower($this->errorCurl), 'timed out') ) {
+        		throw new UserException('O sistema da receita encontra-se temporariamente indisponÌvel!');
+        	}
+        	$error = "N„o houve retorno do Curl.\n $this->errorCurl . $this->soapDebug";
+            $msg = "ServiÁo indisponÌvel no momento.";
+            
+            // echo $error;
+            
+// Comentado para n„o gravar mais erro.
+//             \FrontController::getInstance()->getResponse()->addLogError($error, __METHOD__, __FILE__, __LINE__);
+//             \FrontController::getInstance()->getResponse()->registerErrors();
+
             throw new Exception\RuntimeException($msg);
         }
         //obtem o bloco html da resposta
         $xPos = stripos($resposta, "<");
         $blocoHtml = substr($resposta, 0, $xPos);
         if ($this->infoCurl["http_code"] != '200') {
-            //se n√£o √© igual a 200 houve erro
+            //se n„o √© igual a 200 houve erro
             $msg = $blocoHtml;
             throw new Exception\RuntimeException($msg);
         }
@@ -208,7 +237,7 @@ class CurlSoap
         $lenresp = strlen($resposta);
         //localiza a primeira marca de tag
         $xPos = stripos($resposta, "<");
-        //se n√£o existir n√£o √© um xml nem um html
+        //se n„o existir n„o √© um xml nem um html
         if ($xPos !== false) {
             $xml = substr($resposta, $xPos, $lenresp-$xPos);
         } else {
@@ -217,11 +246,11 @@ class CurlSoap
         //testa para saber se √© um xml mesmo ou √© um html
         $result = simplexml_load_string($xml, 'SimpleXmlElement', LIBXML_NOERROR+LIBXML_ERR_FATAL+LIBXML_ERR_NONE);
         if ($result === false) {
-            //n√£o √© um xml ent√£o pode limpar
+            //n„o √© um xml ent„o pode limpar
             $xml = '';
         }
         if ($xml == '') {
-            $msg = "N√£o houve retorno de um xml verifique soapDebug!!";
+            $msg = "N„o houve retorno de um xml verifique soapDebug!!";
             throw new Exception\RuntimeException($msg);
         }
         if ($xml != '' && substr($xml, 0, 5) != '<?xml') {
@@ -250,7 +279,7 @@ class CurlSoap
             $nPos = strpos($resposta, '<definit');
         }
         if ($nPos === false) {
-            //n√£o retornou um wsdl
+            //n„o retornou um wsdl
             return false;
         }
         $wsdl = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n".trim(substr($resposta, $nPos));
@@ -259,7 +288,7 @@ class CurlSoap
 
     /**
      * zCommCurl
-     * Realiza da comunica√ß√£o via cURL
+     * Realiza da comunicaÁ„o via cURL
      *
      * @param  string $url
      * @param  string $data
@@ -268,9 +297,22 @@ class CurlSoap
      */
     protected function zCommCurl($url, $data = '', $parametros = array(), $port = 443)
     {
+        /*
+         * cria os arquivos tempor·rios
+         */
+        $tempPriKeyPemFile = tmpfile();
+        fwrite($tempPriKeyPemFile, $this->priKey);
+        $tempPriKeyPemPath = stream_get_meta_data($tempPriKeyPemFile);
+        $this->priKeyPath = $tempPriKeyPemPath['uri'];
+        
+        $tempCertKeyPemFile = tmpfile();
+        fwrite($tempCertKeyPemFile, $this->certKey);
+        $tempCertKeyPemPath = stream_get_meta_data($tempCertKeyPemFile);
+        $this->certKeyPath = $tempCertKeyPemPath['uri'];
+
         //incializa cURL
         $oCurl = curl_init();
-        //setting da se√ß√£o soap
+        //setting da seÁ„o soap
         if ($this->proxyIP != '') {
             curl_setopt($oCurl, CURLOPT_HTTPPROXYTUNNEL, 1);
             curl_setopt($oCurl, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
@@ -280,21 +322,25 @@ class CurlSoap
                 curl_setopt($oCurl, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
             } //fim if senha proxy
         }//fim if aProxy
-        //for√ßa a resolu√ß√£o de nomes com IPV4 e n√£o com IPV6, isso
-        //pode acelerar tempor√°riamente as falhas ou demoras decorrentes de
+        //forÁa a resoluÁ„o de nomes com IPV4 e n„o com IPV6, isso
+        //pode acelerar tempor·riamente as falhas ou demoras decorrentes de
         //ambiente mal preparados como os da SEFAZ GO, por√©m pode causar
-        //problemas no futuro quando os endere√ßos IPV4 deixarem de ser usados
+        //problemas no futuro quando os endereÁos IPV4 deixarem de ser usados
         curl_setopt($oCurl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-        curl_setopt($oCurl, CURLOPT_CONNECTTIMEOUT, $this->soapTimeout);
-        curl_setopt($oCurl, CURLOPT_TIMEOUT, $this->soapTimeout * 6);
+        
+        ##problema de conex„o, comentar linha abaixo.
+        //curl_setopt($oCurl, CURLOPT_CONNECTTIMEOUT, $this->soapTimeout);
+        ##problema de conex„o, descomentar linha abaixo.
+        curl_setopt($oCurl, CURLOPT_TIMEOUT,0);
+
         curl_setopt($oCurl, CURLOPT_URL, $url);
         curl_setopt($oCurl, CURLOPT_VERBOSE, 1);
         curl_setopt($oCurl, CURLOPT_HEADER, 1);
-        //caso n√£o seja setado o protpcolo SSL o php dever√° determinar
+        //caso n„o seja setado o protpcolo SSL o php dever· determinar
         //o protocolo correto durante o handshake.
-        //NOTA : poder√£o haver alguns problemas no futuro se algum serividor n√£o
-        //estiver bem configurado e n√£o passar o protocolo correto durante o handshake
-        //nesse caso ser√° necess√°rio setar manualmente o protocolo correto
+        //NOTA : poder„o haver alguns problemas no futuro se algum serividor n„o
+        //estiver bem configurado e n„o passar o protocolo correto durante o handshake
+        //nesse caso ser· necess·rio setar manualmente o protocolo correto
         //curl_setopt($oCurl, CURLOPT_SSLVERSION, 0); //default
         //curl_setopt($oCurl, CURLOPT_SSLVERSION, 1); //TLSv1
         //curl_setopt($oCurl, CURLOPT_SSLVERSION, 2); //SSLv2
@@ -302,17 +348,27 @@ class CurlSoap
         //curl_setopt($oCurl, CURLOPT_SSLVERSION, 4); //TLSv1.0
         //curl_setopt($oCurl, CURLOPT_SSLVERSION, 5); //TLSv1.1
         //curl_setopt($oCurl, CURLOPT_SSLVERSION, 6); //TLSv1.2
-        //se for passado um padr√£o diferente de zero (default) como protocolo ssl
-        //esse novo padr√£o dever√° se usado
+        //se for passado um padr„o diferente de zero (default) como protocolo ssl
+        //esse novo padr„o dever· se usado
         if ($this->sslProtocol !== 0) {
             curl_setopt($oCurl, CURLOPT_SSLVERSION, $this->sslProtocol);
         }
-        curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, 2);
+       //Isso pode dar problema 
+//         curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, 2);
+//         curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, false);
+        
+        curl_setopt($oCurl, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($oCurl, CURLOPT_SSL_VERIFYPEER, 0);
+ 
         if ($port == 443) {
             curl_setopt($oCurl, CURLOPT_PORT, 443);
             curl_setopt($oCurl, CURLOPT_SSLCERT, $this->certKeyPath);
             curl_setopt($oCurl, CURLOPT_SSLKEY, $this->priKeyPath);
+            if (!Configure::isProducao()) {
+                //throw new UserException(getcwd() . "/lib/nfephp/certs/cacerts/nfe_cacerts.crt");
+                curl_setopt($oCurl, CURLOPT_CAINFO, getcwd() . "/lib/nfephp/certs/cacerts/nfe_cacerts.crt");
+            }
+            
         } else {
             $agent= 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
             curl_setopt($oCurl, CURLOPT_USERAGENT, $agent);
@@ -325,16 +381,25 @@ class CurlSoap
         if (!empty($parametros)) {
             curl_setopt($oCurl, CURLOPT_HTTPHEADER, $parametros);
         }
-        //inicia a conex√£o
+        //inicia a conex„o
         $resposta = curl_exec($oCurl);
-        //obtem as informa√ß√µes da conex√£o
+       
+        //obtem as informaÁıes da conex„o
         $info = curl_getinfo($oCurl);
+
         //carrega os dados para debug
         $this->zDebug($info, $data, $resposta);
         $this->errorCurl = curl_error($oCurl);
-        //fecha a conex√£o
+        //fecha a conex„o
         curl_close($oCurl);
         //retorna resposta
+        
+        /*
+         * apaga os arquivos tempor·rios
+        */
+        fclose($tempPriKeyPemFile);
+        fclose($tempCertKeyPemFile);
+        
         return $resposta;
     }
     
@@ -367,7 +432,7 @@ class CurlSoap
         $this->infoCurl["upload_content_length"] = $info["upload_content_length"];
         $this->infoCurl["starttransfer_time"] = $info["starttransfer_time"];
         $this->infoCurl["redirect_time"] = $info["redirect_time"];
-        //coloca as informa√ß√µes em uma vari√°vel
+        //coloca as informaÁıes em uma vari·vel
         $txtInfo ="";
         foreach ($info as $key => $content) {
             if (is_string($content)) {
@@ -380,7 +445,7 @@ class CurlSoap
     
     /**
      * getIBPTProd
-     * Consulta o servi√ßo do IBPT para obter os impostos ao consumidor
+     * Consulta o serviÁo do IBPT para obter os impostos ao consumidor
      * conforme Lei 12.741/2012
      *
      * @param  string $cnpj

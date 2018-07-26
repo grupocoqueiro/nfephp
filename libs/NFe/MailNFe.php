@@ -17,7 +17,7 @@ use NFePHP\Common\Dom\Dom;
 use NFePHP\Common\DateTime\DateTime;
 use NFePHP\Common\Base\BaseMail;
 use NFePHP\Common\Exception;
-use Html2Text\Html2Text;
+use \Html2Text\Html2Text;
 use \DOMDocument;
 
 class MailNFe extends BaseMail
@@ -50,7 +50,7 @@ class MailNFe extends BaseMail
             // Se for informado um ou mais e-mails no $aMail, utiliza eles
             $this->aMail = $aMail;
         } elseif (!sizeof($this->aMail)) {
-            // Caso nÃ£o seja informado nenhum e-mail e nÃ£o tenha sido recuperado qualquer e-mail do xml
+            // Caso não seja informado nenhum e-mail e não tenha sido recuperado qualquer e-mail do xml
             throw new Exception\RuntimeException('Nenhum e-mail informado ou recuperado do XML.');
         }
         $err = $this->sendMail($assunto, $this->aMail);
@@ -71,7 +71,13 @@ class MailNFe extends BaseMail
     protected function zMontaMessagem($pathFile)
     {
         $dom = new Dom();
-        $dom->loadXMLFile($pathFile);
+    	if (file_exists($pathFile)) {
+            //carrega o XML pelo caminho do arquivo informado
+            $dom->loadXMLFile($pathFile);
+        } else {
+            //carrega o XML pelo conteúdo
+            $dom->loadXMLString($pathFile);
+        }
         $infNFe = $dom->getNode('infNFe', 0);
         $ide = $infNFe->getElementsByTagName('ide')->item(0);
         $dest = $infNFe->getElementsByTagName('dest')->item(0);
@@ -147,29 +153,29 @@ class MailNFe extends BaseMail
     {
         if (empty($this->template)) {
             $this->template = "<p><b>Prezados {contato},</b></p>".
-                "<p>VocÃª estÃ¡ recebendo a Nota Fiscal EletrÃ´nica emitida em {data} com o nÃºmero ".
-                "{numero}, sÃ©rie {serie} de {emitente}, no valor de R$ {valor}. ".
-                "Junto com a mercadoria, vocÃª receberÃ¡ tambÃ©m um DANFE (Documento ".
-                "Auxiliar da Nota Fiscal EletrÃ´nica), que acompanha o trÃ¢nsito das mercadorias.</p>".
-                "<p><i>Podemos conceituar a Nota Fiscal EletrÃ´nica como um documento ".
-                "de existÃªncia apenas digital, emitido e armazenado eletronicamente, ".
-                "com o intuito de documentar, para fins fiscais, uma operaÃ§Ã£o de ".
-                "circulaÃ§Ã£o de mercadorias, ocorrida entre as partes. Sua validade ".
-                "jurÃ­dica garantida pela assinatura digital do remetente (garantia ".
-                "de autoria e de integridade) e recepÃ§Ã£o, pelo Fisco, do documento ".
-                "eletrÃ´nico, antes da ocorrÃªncia do Fato Gerador.</i></p>".
-                "<p><i>Os registros fiscais e contÃ¡beis devem ser feitos, a partir ".
-                "do prÃ³prio arquivo da NF-e, anexo neste e-mail, ou utilizando o ".
-                "DANFE, que representa graficamente a Nota Fiscal EletrÃ´nica. ".
-                "A validade e autenticidade deste documento eletrÃ´nico pode ser ".
+                "<p>Você está recebendo a Nota Fiscal do Consumidor Eletrônica emitida em {data} com o número ".
+                "{numero}, série {serie} de {emitente}, no valor de R$ {valor}. ".
+                "Junto com a mercadoria, você receberá também um DANFCE (Documento ".
+                "Auxiliar da Nota Fiscal do Consumidor Eletrônica), que acompanha o trânsito das mercadorias.</p>".
+                "<p><i>Podemos conceituar a Nota Fiscal Eletrônica como um documento ".
+                "de existência apenas digital, emitido e armazenado eletronicamente, ".
+                "com o intuito de documentar, para fins fiscais, uma operação de ".
+                "circulação de mercadorias, ocorrida entre as partes. Sua validade ".
+                "jurídica garantida pela assinatura digital do remetente (garantia ".
+                "de autoria e de integridade) e recepção, pelo Fisco, do documento ".
+                "eletrônico, antes da ocorrência do Fato Gerador.</i></p>".
+                "<p><i>Os registros fiscais e contábeis devem ser feitos, a partir ".
+                "do próprio arquivo da NFC-e, anexo neste e-mail, ou utilizando o ".
+                "DANFCE, que representa graficamente a Nota Fiscal Eletrônica. ".
+                "A validade e autenticidade deste documento eletrônico pode ser ".
                 "verificada no site nacional do projeto (www.nfe.fazenda.gov.br), ".
-                "atravÃ©s da chave de acesso contida no DANFE.</i></p>".
+                "através da chave de acesso contida no DANFE.</i></p>".
                 "<p><i>Para poder utilizar os dados descritos do DANFE na ".
-                "escrituraÃ§Ã£o da NF-e, tanto o contribuinte destinatÃ¡rio, ".
-                "como o contribuinte emitente, terÃ£o de verificar a validade da NF-e. ".
-                "Esta validade estÃ¡ vinculada Ã  efetiva existÃªncia da NF-e nos ".
-                "arquivos da SEFAZ, e comprovada atravÃ©s da emissÃ£o da AutorizaÃ§Ã£o de Uso.</i></p>".
-                "<p><b>O DANFE nÃ£o Ã© uma nota fiscal, nem substitui uma nota fiscal, ".
+                "escrituração da NF-e, tanto o contribuinte destinatário, ".
+                "como o contribuinte emitente, terão de verificar a validade da NF-e. ".
+                "Esta validade está vinculada à  efetiva existência da NF-e nos ".
+                "arquivos da SEFAZ, e comprovada através da emissão da Autorização de Uso.</i></p>".
+                "<p><b>O DANFE não é uma nota fiscal, nem substitui uma nota fiscal, ".
                 "servindo apenas como instrumento auxiliar para consulta da NF-e no ".
                 "Ambiente Nacional.</b></p>".
                 "<p>Para mais detalhes, consulte: <a href=\"http://www.nfe.fazenda.gov.br/\">".

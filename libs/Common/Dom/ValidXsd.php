@@ -28,6 +28,7 @@ class ValidXsd
         $dom->formatOutput = false;
         $dom->loadXML($xml, LIBXML_NOBLANKS | LIBXML_NOEMPTYTAG);
         libxml_clear_errors();
+        
         if (! $dom->schemaValidate($xsd)) {
             $aIntErrors =   libxml_get_errors();
             foreach ($aIntErrors as $intError) {
@@ -74,24 +75,24 @@ class ValidXsd
             "",
             "[Erro 'Layout']",
             "O valor",
-            "n√£o √© aceito para o padr√£o.",
+            "n„o È aceito para o padr„o.",
             "tem o tamanho",
             "[Erro 'Tam. Min']",
-            "deve ter o tamanho m√≠nimo de",
+            "deve ter o tamanho m·nimo de",
             "[Erro 'Tam. Max']",
-            "Tamanho m√°ximo permitido",
+            "Tamanho m·ximo permitido",
             "Elemento",
             "Atributo",
-            "n√£o √© um valor v√°lido",
-            "n√£o √© um valor v√°lido",
+            "n„o È um valor v·lido",
+            "n„o È um valor v·lido",
             "Elemento filho faltando. Era esperado",
             "Falta uma tag no documento",
-            "[Erro 'Conte√∫do']",
+            "[Erro 'Conte˙do']",
             "um de",
             "falha ao carregar entidade externa",
             "Falha ao tentar localizar o schema principal em",
-            "Este elemento n√£o √© esperado. Esperado √©",
-            "n√£o √© um dos seguintes possiveis"
+            "Este elemento n„o È esperado. Esperado È",
+            "n„o È um dos seguintes possiveis"
         );
         return str_replace($enErr, $ptErr, $msg);
     }

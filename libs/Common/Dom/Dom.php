@@ -3,7 +3,7 @@
 namespace NFePHP\Common\Dom;
 
 /**
- * Classe auxiliar com funÃ§Ãµes de DOM extendidas
+ * Classe auxiliar com funções de DOM extendidas
  *
  * @category  NFePHP
  * @package   NFePHP\Common\DomDocument
@@ -35,7 +35,7 @@ class Dom extends DOMDocument
     public function loadXMLString($xmlString = '')
     {
         if (! $this->loadXML($xmlString, LIBXML_NOBLANKS | LIBXML_NOEMPTYTAG)) {
-            $msg = "O arquivo indicado nÃ£o Ã© um XML!";
+            $msg = "O arquivo indicado não é um XML!";
             throw new Exception\RuntimeException($msg);
         }
     }
@@ -89,7 +89,7 @@ class Dom extends DOMDocument
      *
      * @param  string  $nodeName
      * @param  integer $itemNum
-     * @return DOMElement se existir ou string vazia se nÃ£o
+     * @return DOMElement se existir ou string vazia se não
      */
     public function getNode($nodeName, $itemNum = 0)
     {
@@ -120,15 +120,15 @@ class Dom extends DOMDocument
     /**
      * addChild
      * Adiciona um elemento ao node xml passado como referencia
-     * SerÃ£o inclusos erros na array $erros[] sempre que a tag for obrigatÃ³ria e
-     * nenhum parÃ¢metro for passado na variÃ¡vel $content e $force for false
+     * Serão inclusos erros na array $erros[] sempre que a tag for obrigatória e
+     * nenhum parâmetro for passado na variável $content e $force for false
      *
      * @param  \DOMElement $parent
      * @param  string      $name
      * @param  string      $content
      * @param  boolean     $obrigatorio
      * @param  string      $descricao
-     * @param  boolean     $force       forÃ§a a criaÃ§Ã£o do elemento mesmo sem dados e nÃ£o considera como erro
+     * @param  boolean     $force       força a criação do elemento mesmo sem dados e não considera como erro
      * @return void
      */
     public function addChild(&$parent, $name, $content = '', $obrigatorio = false, $descricao = "", $force = false)
@@ -138,7 +138,7 @@ class Dom extends DOMDocument
             $this->erros[] = array(
                 "tag" => $name,
                 "desc" => $descricao,
-                "erro" => "Preenchimento ObrigatÃ³rio!"
+                "erro" => "Preenchimento Obrigatório!"
             );
         }
         if ($obrigatorio || $content !== '' || $force) {

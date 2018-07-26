@@ -2,6 +2,7 @@
 
 namespace NFePHP\Extras;
 
+use DOMNode;
 use NFePHP\Extras\NfephpException;
 use NFePHP\Extras\PdfNFePHP;
 use NFePHP\Extras\CommonNFePHP;
@@ -10,11 +11,11 @@ use NFePHP\Extras\DomDocumentNFePHP;
 
 //ajuste do tempo limite de resposta do processo
 //set_time_limit(1800);
-//defini√ß√£o do caminho para o diretorio com as fontes do FDPF
+//definiÁ„o do caminho para o diretorio com as fontes do FDPF
 if (!defined('FPDF_FONTPATH')) {
     define('FPDF_FONTPATH', 'font/');
 }
-//situa√ß√£o externa do documento
+//situaÁ„o externa do documento
 if (!defined('NFEPHP_SITUACAO_EXTERNA_CANCELADA')) {
     define('NFEPHP_SITUACAO_EXTERNA_CANCELADA', 1);
     define('NFEPHP_SITUACAO_EXTERNA_DENEGADA', 2);
@@ -26,19 +27,19 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
 {
 
     /**
-     * alinhamento padr√£o do logo (C-Center)
+     * alinhamento padr„o do logo (C-Center)
      *
      * @var string
      */
     public $logoAlign='C';
     /**
-     * Posi√ß√£o
+     * PosiÁ„o
      *
      * @var float
      */
     public $yDados=0;
     /**
-     * Situa√ß√£o
+     * SituaÁ„o
      *
      * @var integer
      */
@@ -56,17 +57,17 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      */
     public $qCanhoto=1;
 
-    // IN√çCIO ATRIBUTOS DE PAR√ÇMETROS DE EXIBI√á√ÉO
+    // INÕCIO ATRIBUTOS DE PAR¬METROS DE EXIBI«√O
     /**
-     * Par√¢metro para exibir ou ocultar os valores do PIS/COFINS.
+     * Par‚metro para exibir ou ocultar os valores do PIS/COFINS.
      *
      * @var boolean
      */
     public $exibirPIS=true;
 
-    // IN√çCIO ATRIBUTOS DE PAR√ÇMETROS DE EXIBI√á√ÉO
+    // INÕCIO ATRIBUTOS DE PAR¬METROS DE EXIBI«√O
     /**
-     * Par√¢metro para exibir ou ocultar os valores do ICMS Interestadual e Valor Total dos Impostos.
+     * Par‚metro para exibir ou ocultar os valores do ICMS Interestadual e Valor Total dos Impostos.
      *
      * @var boolean
      */
@@ -74,32 +75,32 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
 
 
     /**
-     * Par√¢metro para exibir ou ocultar o texto sobre valor aproximado dos tributos.
+     * Par‚metro para exibir ou ocultar o texto sobre valor aproximado dos tributos.
      *
      * @var boolean
      */
     public $exibirValorTributos=true;
     /**
-     * Par√¢metro para exibir ou ocultar o texto adicional sobre a forma de pagamento
-     * e as informa√ß√µes de fatura/duplicata.
+     * Par‚metro para exibir ou ocultar o texto adicional sobre a forma de pagamento
+     * e as informaÁıes de fatura/duplicata.
      *
      * @var boolean
      */
     public $exibirTextoFatura=false;
     /**
-     * Par√¢metro do controle se deve concatenar automaticamente informa√ß√µes complementares
-     * na descri√ß√£o do produto, como por exemplo, informa√ß√µes sobre impostos.
+     * Par‚metro do controle se deve concatenar automaticamente informaÁıes complementares
+     * na descriÁ„o do produto, como por exemplo, informaÁıes sobre impostos.
      *
      * @var boolean
      */
     public $descProdInfoComplemento=true;
     /**
-     * Par√¢metro do controle se deve gerar quebras de linha com "\n" a partir de ";" na descri√ß√£o do produto.
+     * Par‚metro do controle se deve gerar quebras de linha com "\n" a partir de ";" na descriÁ„o do produto.
      *
      * @var boolean
      */
     public $descProdQuebraLinha=true;
-    // FIM ATRIBUTOS DE PAR√ÇMETROS DE EXIBI√á√ÉO
+    // FIM ATRIBUTOS DE PAR¬METROS DE EXIBI«√O
 
     /**
      * objeto fpdf()
@@ -112,7 +113,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      *
      * @var string
      */
-    protected $xml;
+    public  $xml;
     /**
      * path para logomarca em jpg
      *
@@ -132,7 +133,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      */
     protected $errStatus=false;
     /**
-     * orienta√ß√£o da DANFE
+     * orientaÁ„o da DANFE
      * P-Retrato ou
      * L-Paisagem
      *
@@ -149,14 +150,14 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      * destino do arquivo pdf
      * I-borwser,
      * S-retorna o arquivo,
-     * D-for√ßa download,
+     * D-forÁa download,
      * F-salva em arquivo local
      *
      * @var string
      */
     protected $destino = 'I';
     /**
-     * diretorio para salvar o pdf com a op√ß√£o de destino = F
+     * diretorio para salvar o pdf com a opÁ„o de destino = F
      *
      * @var string
      */
@@ -168,7 +169,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      */
     protected $fontePadrao='Times';
     /**
-     * vers√£o
+     * vers„o
      *
      * @var string
      */
@@ -186,19 +187,19 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      */
     protected $wAdic = 0;
     /**
-     * largura imprimivel, em mil√≠metros
+     * largura imprimivel, em milÌmetros
      *
      * @var float
      */
     protected $wPrint;
     /**
-     * Comprimento (altura) imprimivel, em mil√≠metros
+     * Comprimento (altura) imprimivel, em milÌmetros
      *
      * @var float
      */
     protected $hPrint;
     /**
-     * largura do canhoto (25mm) apenas para a formata√ß√£o paisagem
+     * largura do canhoto (25mm) apenas para a formataÁ„o paisagem
      *
      * @var float
      */
@@ -210,7 +211,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      */
     protected $formatoChave="#### #### #### #### #### #### #### #### #### #### ####";
     /**
-     * quantidade de itens j√° processados na montagem do DANFE
+     * quantidade de itens j· processados na montagem do DANFE
      *
      * @var integer
      */
@@ -331,7 +332,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      */
     protected $infAdic;
     /**
-     * Tipo de emiss√£o
+     * Tipo de emiss„o
      *
      * @var integer
      */
@@ -365,14 +366,14 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      * __construct
      *
      * @name  __construct
-     * @param string  $docXML      Conte√∫do XML da NF-e (com ou sem a tag nfeProc)
-     * @param string  $sOrientacao (Opcional) Orienta√ß√£o da impress√£o P-retrato L-Paisagem
+     * @param string  $docXML      Conte˙do XML da NF-e (com ou sem a tag nfeProc)
+     * @param string  $sOrientacao (Opcional) OrientaÁ„o da impress„o P-retrato L-Paisagem
      * @param string  $sPapel      Tamanho do papel (Ex. A4)
      * @param string  $sPathLogo   Caminho para o arquivo do logo
-     * @param string  $sDestino    Estabelece a dire√ß√£o do envio do documento PDF I-browser D-browser com download S-
+     * @param string  $sDestino    Estabelece a direÁ„o do envio do documento PDF I-browser D-browser com download S-
      * @param string  $sDirPDF     Caminho para o diretorio de armazenamento dos arquivos PDF
      * @param string  $fonteDANFE  Nome da fonte alternativa do DAnfe
-     * @param integer $mododebug   0-N√£o 1-Sim e 2-nada (2 default)
+     * @param integer $mododebug   0-N„o 1-Sim e 2-nada (2 default)
      */
     public function __construct(
         $docXML = '',
@@ -384,9 +385,9 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $fonteDANFE = '',
         $mododebug = 2
     ) {
-        //verificacao tempor√°ria de seguran√ßa apenas para alertar se tentar instanciar
-        //a classe com 9 par√¢metros, pois o "$exibirPIS" foi removido em 20/08/2014
-        // e parametrizado como atributo p√∫blico para simplificar o construtor
+        //verificacao tempor·ria de seguranÁa apenas para alertar se tentar instanciar
+        //a classe com 9 par‚metros, pois o "$exibirPIS" foi removido em 20/08/2014
+        // e parametrizado como atributo p˙blico para simplificar o construtor
         if (func_num_args() == 9) {
             throw new NfephpException("ATENCAO: o construtor da classe DanfeNFePHP nao possui mais 9 parametros");
         }
@@ -443,7 +444,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $this->tpEmis     = $this->ide->getElementsByTagName("tpEmis")->item(0)->nodeValue;
             $this->tpImp      = $this->ide->getElementsByTagName("tpImp")->item(0)->nodeValue;
             $this->infProt    = $this->dom->getElementsByTagName("infProt")->item(0);
-            //valida se o XML √© uma NF-e modelo 55, pois n√£o pode ser 65 (NFC-e)
+            //valida se o XML È uma NF-e modelo 55, pois n„o pode ser 65 (NFC-e)
             if ($this->pSimpleGetValue($this->ide, "mod") != '55') {
                 throw new NfephpException("O xml do DANFE deve ser uma NF-e modelo 55");
             }
@@ -511,13 +512,13 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
 
     /**
      * montaDANFE
-     * Monta a DANFE conforme as informa√ß√µes fornecidas para a classe durante sua
-     * constru√ß√£o. Constroi DANFEs com at√© 3 p√°ginas podendo conter at√© 56 itens.
-     * A defini√ß√£o de margens e posi√ß√µes iniciais para a impress√£o s√£o estabelecidas
-     * pelo conte√∫do da fun√ßao e podem ser modificados.
+     * Monta a DANFE conforme as informaÁıes fornecidas para a classe durante sua
+     * construÁ„o. Constroi DANFEs com atÈ 3 p·ginas podendo conter atÈ 56 itens.
+     * A definiÁ„o de margens e posiÁıes iniciais para a impress„o s„o estabelecidas
+     * pelo conte˙do da funÁao e podem ser modificados.
      *
-     * @param  string $orientacao (Opcional) Estabelece a orienta√ß√£o da impress√£o
-     *  (ex. P-retrato), se nada for fornecido ser√° usado o padr√£o da NFe
+     * @param  string $orientacao (Opcional) Estabelece a orientaÁ„o da impress„o
+     *  (ex. P-retrato), se nada for fornecido ser· usado o padr„o da NFe
      * @param  string $papel      (Opcional) Estabelece o tamanho do papel (ex. A4)
      * @return string O ID da NFe numero de 44 digitos extraido do arquivo XML
      */
@@ -532,7 +533,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $margEsq = 2,
         $margInf = 2
     ) {
-        //se a orienta√ß√£o estiver em branco utilizar o padr√£o estabelecido na NF
+        //se a orientaÁ„o estiver em branco utilizar o padr„o estabelecido na NF
         if ($orientacao == '') {
             if ($this->tpImp == '1') {
                 $orientacao = 'P';
@@ -552,10 +553,10 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         } else {
             $this->pdf = new PdfNFePHP($this->orientacao, 'mm', $this->papel);
         }
-        //margens do PDF, em mil√≠metros. Obs.: a margem direita √© sempre igual √†
-        //margem esquerda. A margem inferior *n√£o* existe na FPDF, √© definida aqui
-        //apenas para controle se necess√°rio ser maior do que a margem superior
-        // posi√ß√£o inicial do conte√∫do, a partir do canto superior esquerdo da p√°gina
+        //margens do PDF, em milÌmetros. Obs.: a margem direita È sempre igual ‡
+        //margem esquerda. A margem inferior *n„o* existe na FPDF, È definida aqui
+        //apenas para controle se necess·rio ser maior do que a margem superior
+        // posiÁ„o inicial do conte˙do, a partir do canto superior esquerdo da p·gina
         $xInic = $margEsq;
         $yInic = $margSup;
         if ($this->orientacao == 'P') {
@@ -586,7 +587,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $this->pdf->SetFillColor(255, 255, 255);
         // inicia o documento
         $this->pdf->Open();
-        // adiciona a primeira p√°gina
+        // adiciona a primeira p·gina
         $this->pdf->AddPage($this->orientacao, $this->papel);
         $this->pdf->SetLineWidth(0.1);
         $this->pdf->SetTextColor(0, 0, 0);
@@ -594,7 +595,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         //##################################################################
         // CALCULO DO NUMERO DE PAGINAS A SEREM IMPRESSAS
         //##################################################################
-        //Verificando quantas linhas ser√£o usadas para impress√£o das duplicatas
+        //Verificando quantas linhas ser„o usadas para impress„o das duplicatas
         $linhasDup = 0;
         if (($this->dup->length > 0) && ($this->dup->length <= 7)) {
             $linhasDup = 1;
@@ -603,17 +604,17 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         } elseif (($this->dup->length > 14) && ($this->dup->length <= 21)) {
             $linhasDup = 3;
         } elseif ($this->dup->length > 21) {
-            // chinnonsantos 11/05/2016: Limite m√°ximo de impress√£o de duplicatas na NFe,
-            // s√≥ vai ser exibito as 21 primeiras duplicatas (parcelas de pagamento),
-            // se n√£o oculpa espa√ßo d+, cada linha comporta at√© 7 duplicatas.
+            // chinnonsantos 11/05/2016: Limite m·ximo de impress„o de duplicatas na NFe,
+            // sÛ vai ser exibito as 21 primeiras duplicatas (parcelas de pagamento),
+            // se n„o oculpa espaÁo d+, cada linha comporta atÈ 7 duplicatas.
             $linhasDup = 3;
         }
-        //verifica se ser√° impressa a linha dos servi√ßos ISSQN
+        //verifica se ser· impressa a linha dos serviÁos ISSQN
         $linhaISSQN = 0;
         if ((isset($this->ISSQNtot)) && ($this->pSimpleGetValue($this->ISSQNtot, 'vServ') > 0)) {
             $linhaISSQN = 1;
         }
-        //calcular a altura necess√°ria para os dados adicionais
+        //calcular a altura necess·ria para os dados adicionais
         if ($this->orientacao == 'P') {
             $this->wAdic = round($this->wPrint*0.66, 0);
         } else {
@@ -678,7 +679,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $this->textoAdic .= "LOCAL DE ENTREGA : ".$txRetCNPJ.'-'.$txRetxLgr.', '.$txRetnro.' '.$txRetxCpl.
                ' - '.$txRetxBairro.' '.$txRetxMun.' - '.$txRetUF."\r\n";
         }
-        //informa√ß√µes adicionais
+        //informaÁıes adicionais
         $this->textoAdic .= $this->pGeraInformacoesDasNotasReferenciadas();
         if (isset($this->infAdic)) {
             $i = 0;
@@ -692,7 +693,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             if ($infPedido != "") {
                 $this->textoAdic .= $infPedido;
             }
-            $this->textoAdic .= $this->pSimpleGetValue($this->dest, "email", ' Email do Destinat√°rio: ');
+            $this->textoAdic .= $this->pSimpleGetValue($this->dest, "email", ' Email do Destinat·rio: ');
             $this->textoAdic .= ! empty($this->infAdic->getElementsByTagName("infAdFisco")->item(0)->nodeValue) ?
                 "\r\n Inf. fisco: " .
                 trim($this->infAdic->getElementsByTagName("infAdFisco")->item(0)->nodeValue) : '';
@@ -707,9 +708,9 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                 }
             }
         }
-        //INCLUSO pela NT 2013.003 Lei da Transpar√™ncia
-        //verificar se a informa√ß√£o sobre o valor aproximado dos tributos
-        //j√° se encontra no campo de informa√ß√µes adicionais
+        //INCLUSO pela NT 2013.003 Lei da TransparÍncia
+        //verificar se a informaÁ„o sobre o valor aproximado dos tributos
+        //j· se encontra no campo de informaÁıes adicionais
         if ($this->exibirValorTributos) {
             $flagVTT = strpos(strtolower(trim($this->textoAdic)), 'valor');
             $flagVTT = $flagVTT || strpos(strtolower(trim($this->textoAdic)), 'vl');
@@ -721,7 +722,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                 $this->textoAdic .= "\n Valor Aproximado dos Tributos : R$ " . number_format($vTotTrib, 2, ",", ".");
             }
         }
-        //fim da altera√ß√£o NT 2013.003 Lei da Transpar√™ncia
+        //fim da alteraÁ„o NT 2013.003 Lei da TransparÍncia
         $this->textoAdic = str_replace(";", "\n", $this->textoAdic);
         $alinhas = explode("\n", $this->textoAdic);
         $numlinhasdados = 0;
@@ -733,14 +734,14 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $hdadosadic = 10;
         }
         //altura disponivel para os campos da DANFE
-        $hcabecalho = 47;//para cabe√ßalho
+        $hcabecalho = 47;//para cabeÁalho
         $hdestinatario = 25;//para destinatario
         $hduplicatas = 12;//para cada grupo de 7 duplicatas
         $himposto = 18;// para imposto
         $htransporte = 25;// para transporte
         $hissqn = 11;// para issqn
         $hfooter = 5;// para rodape
-        $hCabecItens = 4;//cabe√ßalho dos itens
+        $hCabecItens = 4;//cabeÁalho dos itens
         //alturas disponiveis para os dados
         $hDispo1 = $this->hPrint - 10 - ($hcabecalho +
             $hdestinatario + ($linhasDup * $hduplicatas) + $himposto + $htransporte +
@@ -754,7 +755,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $w = $this->wPrint - $this->wCanhoto;
         }
         $hDispo2 = $this->hPrint - 10 - ($hcabecalho + $hfooter + $hCabecItens)-4;
-        //Contagem da altura ocupada para impress√£o dos itens
+        //Contagem da altura ocupada para impress„o dos itens
         $fontProduto = array('font'=>$this->fontePadrao, 'size'=>7, 'style'=>'');
         $i = 0;
         $numlinhas = 0;
@@ -770,14 +771,14 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                 $totPag++;
                 $hDispo = $hDispo2;
                 $hUsado = $hCabecItens;
-                // Remove canhoto para p√°ginas secund√°rias em modo paisagem ('L')
+                // Remove canhoto para p·ginas secund·rias em modo paisagem ('L')
                 $w2 = round($this->wPrint*0.28, 0);
-                $i--; // decrementa para readicionar o item que n√£o coube nessa pagina na outra.
+                $i--; // decrementa para readicionar o item que n„o coube nessa pagina na outra.
             }
             $i++;
         } //fim da soma das areas de itens usadas
         $qtdeItens = $i; //controle da quantidade de itens no DANFE
-        //montagem da primeira p√°gina
+        //montagem da primeira p·gina
         $pag = 1;
         $x = $xInic;
         $y = $yInic;
@@ -792,9 +793,9 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                 $x = 25 * $i;
             }
         }
-        //coloca o cabe√ßalho
+        //coloca o cabeÁalho
         $y = $this->pCabecalhoDANFE($x, $y, $pag, $totPag);
-        //coloca os dados do destinat√°rio
+        //coloca os dados do destinat·rio
         $y = $this->pDestinatarioDANFE($x, $y+1);
         //coloca os dados das faturas
         $y = $this->pFaturaDANFE($x, $y+1);
@@ -813,36 +814,36 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         }
         //coloca os dados adicionais da NFe
         $y = $this->pDadosAdicionaisDANFE($x, $y, $hdadosadic);
-        //coloca o rodap√© da p√°gina
+        //coloca o rodapÈ da p·gina
         if ($this->orientacao == 'P') {
             $this->pRodape($xInic, $y-1);
         } else {
             $this->pRodape($xInic, $this->hPrint + 1);
         }
-        //loop para p√°ginas seguintes
+        //loop para p·ginas seguintes
         for ($n = 2; $n <= $totPag; $n++) {
             // fixa as margens
             $this->pdf->SetMargins($margEsq, $margSup);
-            //adiciona nova p√°gina
+            //adiciona nova p·gina
             $this->pdf->AddPage($this->orientacao, $this->papel);
             //ajusta espessura das linhas
             $this->pdf->SetLineWidth(0.1);
             //seta a cor do texto para petro
             $this->pdf->SetTextColor(0, 0, 0);
-            // posi√ß√£o inicial do relatorio
+            // posiÁ„o inicial do relatorio
             $x = $xInic;
             $y = $yInic;
-            //coloca o cabe√ßalho na p√°gina adicional
+            //coloca o cabeÁalho na p·gina adicional
             $y = $this->pCabecalhoDANFE($x, $y, $n, $totPag);
-            //coloca os itens na p√°gina adicional
+            //coloca os itens na p·gina adicional
             $y = $this->pItensDANFE($x, $y+1, $nInicial, $hDispo2, $n, $totPag, $hCabecItens);
-            //coloca o rodap√© da p√°gina
+            //coloca o rodapÈ da p·gina
             if ($this->orientacao == 'P') {
                 $this->pRodape($xInic, $y + 4);
             } else {
                 $this->pRodape($xInic, $this->hPrint + 4);
             }
-            //se estiver na √∫ltima p√°gina e ainda restar itens para inserir, adiciona mais uma p√°gina
+            //se estiver na ˙ltima p·gina e ainda restar itens para inserir, adiciona mais uma p·gina
             if ($n == $totPag && $this->qtdeItensProc < $qtdeItens) {
                 $totPag++;
             }
@@ -856,15 +857,15 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         } else {
             return str_replace('NFe', '', $this->infNFe->getAttribute("Id"));
         }
-    }//fim da fun√ß√£o montaDANFE
+    }//fim da funÁ„o montaDANFE
 
     /**
      * anfavea
-     * Fun√ß√£o para transformar o campo cdata do padr√£o ANFAVEA para
-     * texto imprim√≠vel
+     * FunÁ„o para transformar o campo cdata do padr„o ANFAVEA para
+     * texto imprimÌvel
      *
      * @param  string $cdata campo CDATA
-     * @return string conte√∫do do campo CDATA como string
+     * @return string conte˙do do campo CDATA como string
      */
     private function pAnfavea($cdata = '')
     {
@@ -1006,31 +1007,31 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
 
     /**
      * printDANFE
-     * Esta fun√ß√£o envia a DANFE em PDF criada para o dispositivo informado.
-     * O destino da impress√£o pode ser :
+     * Esta funÁ„o envia a DANFE em PDF criada para o dispositivo informado.
+     * O destino da impress„o pode ser :
      * I-browser
      * D-browser com download
      * F-salva em um arquivo local com o nome informado
-     * S-retorna o documento como uma string e o nome √© ignorado.
+     * S-retorna o documento como uma string e o nome È ignorado.
      * Para enviar o pdf diretamente para uma impressora indique o
      * nome da impressora e o destino deve ser 'S'.
      *
      * @param  string $nome    Path completo com o nome do arquivo pdf
-     * @param  string $destino Dire√ß√£o do envio do PDF
-     * @param  string $printer Identifica√ß√£o da impressora no sistema
-     * @return string Caso o destino seja S o pdf √© retornado como uma string
-     * @todo   Rotina de impress√£o direta do arquivo pdf criado
+     * @param  string $destino DireÁ„o do envio do PDF
+     * @param  string $printer IdentificaÁ„o da impressora no sistema
+     * @return string Caso o destino seja S o pdf È retornado como uma string
+     * @todo   Rotina de impress„o direta do arquivo pdf criado
      */
     public function printDANFE($nome = '', $destino = 'I', $printer = '')
     {
         $arq = $this->pdf->Output($nome, $destino);
         if ($destino == 'S') {
-            //aqui pode entrar a rotina de impress√£o direta
+            //aqui pode entrar a rotina de impress„o direta
         }
         return $arq;
 
         /*
-           Op√ß√£o 1 - exemplo de script shell usando acroread
+           OpÁ„o 1 - exemplo de script shell usando acroread
              #!/bin/sh
             if ($# == 2) then
                 set printer=$2
@@ -1043,17 +1044,17 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             else
                 echo PDF Print: No filename defined!
             fi
-            Op√ß√£o 2 -
+            OpÁ„o 2 -
             salvar pdf em arquivo temporario
             converter pdf para ps usando pdf2ps do linux
             imprimir ps para printer usando lp ou lpr
             remover os arquivos temporarios pdf e ps
-            Op√ß√£o 3 -
+            OpÁ„o 3 -
             salvar pdf em arquivo temporario
             imprimir para printer usando lp ou lpr com system do php
             remover os arquivos temporarios pdf
         */
-    } //fim fun√ß√£o printDANFE
+    } //fim funÁ„o printDANFE
 
 
     protected function pNotaCancelada()
@@ -1061,7 +1062,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         if (!isset($this->nfeProc)) {
             return false;
         }
-        //N√ÉO ERA NECESS√ÅRIO ESSA FUN√á√ÉO POIS S√ì SE USA 1
+        //N√O ERA NECESS¡RIO ESSA FUN«√O POIS S” SE USA 1
         //VEZ NO ARQUIVO INTEIRO
         $cStat = $this->pSimpleGetValue($this->nfeProc, "cStat");
         return $cStat == '101' ||
@@ -1081,7 +1082,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         if (!isset($this->nfeProc)) {
             return false;
         }
-        //N√ÉO ERA NECESS√ÅRIO ESSA FUN√á√ÉO POIS S√ì SE USA
+        //N√O ERA NECESS¡RIO ESSA FUN«√O POIS S” SE USA
         //1 VEZ NO ARQUIVO INTEIRO
         $cStat = $this->pSimpleGetValue($this->nfeProc, "cStat");
         return $cStat == '110' ||
@@ -1094,11 +1095,11 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      *cabecalhoDANFE
      * Monta o cabelhalho da DANFE (retrato e paisagem)
      *
-     * @param  number $x      Posi√ß√£o horizontal inicial, canto esquerdo
-     * @param  number $y      Posi√ß√£o vertical inicial, canto superior
-     * @param  number $pag    N√∫mero da P√°gina
-     * @param  number $totPag Total de p√°ginas
-     * @return number Posi√ß√£o vertical final
+     * @param  number $x      PosiÁ„o horizontal inicial, canto esquerdo
+     * @param  number $y      PosiÁ„o vertical inicial, canto superior
+     * @param  number $pag    N˙mero da P·gina
+     * @param  number $totPag Total de p·ginas
+     * @return number PosiÁ„o vertical final
      */
     protected function pCabecalhoDANFE($x = 0, $y = 0, $pag = '1', $totPag = '1')
     {
@@ -1107,14 +1108,14 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         if ($this->orientacao == 'P') {
               $maxW = $this->wPrint;
         } else {
-            if ($pag == 1) { // primeira p√°gina
+            if ($pag == 1) { // primeira p·gina
                 $maxW = $this->wPrint - $this->wCanhoto;
-            } else { // p√°ginas seguintes
+            } else { // p·ginas seguintes
                 $maxW = $this->wPrint;
             }
         }
         //####################################################################################
-        //coluna esquerda identifica√ß√£o do emitente
+        //coluna esquerda identificaÁ„o do emitente
         $w = round($maxW*0.41, 0);
         if ($this->orientacao == 'P') {
             $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'I');
@@ -1125,15 +1126,15 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $h=32;
         $oldY += $h;
         $this->pTextBox($x, $y, $w, $h);
-        $texto = 'IDENTIFICA√á√ÉO DO EMITENTE';
+        $texto = 'IDENTIFICA«√O DO EMITENTE';
         $this->pTextBox($x, $y, $w, 5, $texto, $aFont, 'T', 'C', 0, '');
         //estabelecer o alinhamento
         //pode ser left L, center C, right R, full logo L
         //se for left separar 1/3 da largura para o tamanho da imagem
-        //os outros 2/3 ser√£o usados para os dados do emitente
+        //os outros 2/3 ser„o usados para os dados do emitente
         //se for center separar 1/2 da altura para o logo e 1/2 para os dados
-        //se for right separa 2/3 para os dados e o ter√ßo seguinte para o logo
-        //se n√£o houver logo centraliza dos dados do emitente
+        //se for right separa 2/3 para os dados e o terÁo seguinte para o logo
+        //se n„o houver logo centraliza dos dados do emitente
         // coloca o logo
         if (is_file($this->logomarca)) {
             $logoInfo=getimagesize($this->logomarca);
@@ -1146,7 +1147,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                 $nImgH = round($logoHmm * ($nImgW/$logoWmm), 0);
                 $xImg = $x+1;
                 $yImg = round(($h-$nImgH)/2, 0)+$y;
-                //estabelecer posi√ß√µes do texto
+                //estabelecer posiÁıes do texto
                 $x1 = round($xImg + $nImgW +1, 0);
                 $y1 = round($h/3+$y, 0);
                 $tw = round(2*$w/3, 0);
@@ -1181,13 +1182,13 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $y1 = round($h/3+$y, 0);
             $tw = $w;
         }
-        // monta as informa√ß√µes apenas se diferente de full logo
+        // monta as informaÁıes apenas se diferente de full logo
         if ($this->logoAlign !== 'F') {
             //Nome emitente
             $aFont = array('font'=>$this->fontePadrao, 'size'=>12, 'style'=>'B');
             $texto = $this->emit->getElementsByTagName("xNome")->item(0)->nodeValue;
             $this->pTextBox($x1, $y1, $tw, 8, $texto, $aFont, 'T', 'C', 0, '');
-            //endere√ßo
+            //endereÁo
             $y1 = $y1+5;
             $aFont = array('font'=>$this->fontePadrao, 'size'=>8, 'style'=>'');
             $fone = ! empty($this->enderEmit->getElementsByTagName("fone")->item(0)->nodeValue)
@@ -1216,48 +1217,48 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $this->pTextBox($x, $y, $w, $h);
 
         if (! $this->pNotaCancelada()) {
-            // A PRINCIPIO N√ÉO PRECISAVA, POIS A NFE EST√Å AUTORIZADA,
-            // S√ì SE RETIRA O DANFE PARA NOTAS N√ÉO AUTORIZADAS
+            // A PRINCIPIO N√O PRECISAVA, POIS A NFE EST¡ AUTORIZADA,
+            // S” SE RETIRA O DANFE PARA NOTAS N√O AUTORIZADAS
             $texto = "DANFE";
             $aFont = array('font'=>$this->fontePadrao, 'size'=>14, 'style'=>'B');
-            $this->pTextBox($x, $y+1, $w, $h, $texto, $aFont, 'T', 'C', 0, '');
+            $this->pTextBox($x, $y+1, $w, $h, utf8_encode($texto), $aFont, 'T', 'C', 0, '');
             $aFont = array('font'=>$this->fontePadrao, 'size'=>8, 'style'=>'');
-            $texto = 'Documento Auxiliar da Nota Fiscal Eletr√¥nica';
+            $texto = 'Documento Auxiliar da Nota Fiscal EletrÙnica';
             $h = 20;
-            $this->pTextBox($x, $y+6, $w, $h, $texto, $aFont, 'T', 'C', 0, '', false);
+            $this->pTextBox($x, $y+6, $w, $h, utf8_encode($texto), $aFont, 'T', 'C', 0, '', false);
         }
 
         $aFont = array('font'=>$this->fontePadrao, 'size'=>8, 'style'=>'');
         $texto = '0 - ENTRADA';
         $y1 = $y + 14;
         $h = 8;
-        $this->pTextBox($x+2, $y1, $w, $h, $texto, $aFont, 'T', 'L', 0, '');
-        $texto = '1 - SA√çDA';
+        $this->pTextBox($x+2, $y1, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 0, '');
+        $texto = '1 - SAÕDA';
         $y1 = $y + 17;
-        $this->pTextBox($x+2, $y1, $w, $h, $texto, $aFont, 'T', 'L', 0, '');
+        $this->pTextBox($x+2, $y1, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 0, '');
         //tipo de nF
         $aFont = array('font'=>$this->fontePadrao, 'size'=>12, 'style'=>'B');
         $y1 = $y + 13;
         $h = 7;
         $texto = $this->ide->getElementsByTagName('tpNF')->item(0)->nodeValue;
-        $this->pTextBox($x+27, $y1, 5, $h, $texto, $aFont, 'C', 'C', 1, '');
+        $this->pTextBox($x+27, $y1, 5, $h, utf8_encode($texto), $aFont, 'C', 'C', 1, '');
         //numero da NF
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
         $y1 = $y + 20;
         $numNF = str_pad($this->ide->getElementsByTagName('nNF')->item(0)->nodeValue, 9, "0", STR_PAD_LEFT);
         $numNF = $this->pFormat($numNF, "###.###.###");
-        $texto = "N¬∫. " . $numNF;
-        $this->pTextBox($x, $y1, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
-        //S√©rie
+        $texto = "N∫. " . $numNF;
+        $this->pTextBox($x, $y1, $w, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '');
+        //SÈrie
         $y1 = $y + 23;
         $serie = str_pad($this->ide->getElementsByTagName('serie')->item(0)->nodeValue, 3, "0", STR_PAD_LEFT);
-        $texto = "S√©rie " . $serie;
-        $this->pTextBox($x, $y1, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
+        $texto = "SÈrie " . $serie;
+        $this->pTextBox($x, $y1, $w, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '');
         //numero paginas
         $aFont = array('font'=>$this->fontePadrao, 'size'=>8, 'style'=>'I');
         $y1 = $y + 26;
         $texto = "Folha " . $pag . "/" . $totPag;
-        $this->pTextBox($x, $y1, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
+        $this->pTextBox($x, $y1, $w, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '');
 
         //####################################################################################
         //coluna codigo de barras
@@ -1279,18 +1280,18 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $y1 = $y+4+$bH;
         $h = 7;
         $texto = 'CHAVE DE ACESSO';
-        $this->pTextBox($x, $y1, $w, $h, $texto, $aFont, 'T', 'L', 0, '');
+        $this->pTextBox($x, $y1, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 0, '');
         $aFont = array('font'=>$this->fontePadrao, 'size'=>8, 'style'=>'B');
         $y1 = $y+8+$bH;
         $texto = $this->pFormat($chave_acesso, $this->formatoChave);
-        $this->pTextBox($x+2, $y1, $w-2, $h, $texto, $aFont, 'T', 'C', 0, '');
+        $this->pTextBox($x+2, $y1, $w-2, $h, utf8_encode($texto), $aFont, 'T', 'C', 0, '');
         $y1 = $y+12+$bH;
         $aFont = array('font'=>$this->fontePadrao, 'size'=>8, 'style'=>'');
         $chaveContingencia="";
         if ($this->pNotaDPEC()) {
-            $cabecalhoProtoAutorizacao = 'N√öMERO DE REGISTRO DPEC';
+            $cabecalhoProtoAutorizacao = 'N⁄MERO DE REGISTRO DPEC';
         } else {
-            $cabecalhoProtoAutorizacao = 'PROTOCOLO DE AUTORIZA√á√ÉO DE USO';
+            $cabecalhoProtoAutorizacao = 'PROTOCOLO DE AUTORIZA«√O DE USO';
         }
         if (($this->tpEmis == 2 || $this->tpEmis == 5) && !$this->pNotaDPEC()) {
             $cabecalhoProtoAutorizacao = "DADOS DA NF-E";
@@ -1300,7 +1301,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $this->pdf->Code128($x+11, $y1+1, $chaveContingencia, $bW*.9, $bH/2);
         } else {
             $texto = 'Consulta de autenticidade no portal nacional da NF-e';
-            $this->pTextBox($x+2, $y1, $w-2, $h, $texto, $aFont, 'T', 'C', 0, '');
+            $this->pTextBox($x+2, $y1, $w-2, $h, utf8_encode($texto), $aFont, 'T', 'C', 0, '');
             $y1 = $y+16+$bH;
             $texto = 'www.nfe.fazenda.gov.br/portal ou no site da Sefaz Autorizadora';
             $this->pTextBox(
@@ -1318,29 +1319,29 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         }
 
         //####################################################################################
-        //Dados da NF do cabe√ßalho
-        //natureza da opera√ß√£o
-        $texto = 'NATUREZA DA OPERA√á√ÉO';
+        //Dados da NF do cabeÁalho
+        //natureza da operaÁ„o
+        $texto = 'NATUREZA DA OPERA«√O';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
         $w = $w1+$w2;
         $y = $oldY;
         $oldY += $h;
         $x = $oldX;
         $h = 7;
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $texto = $this->ide->getElementsByTagName("natOp")->item(0)->nodeValue;
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
         $x += $w;
         $w = $w3;
-        //PROTOCOLO DE AUTORIZA√á√ÉO DE USO ou DADOS da NF-E
+        //PROTOCOLO DE AUTORIZA«√O DE USO ou DADOS da NF-E
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $cabecalhoProtoAutorizacao, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($cabecalhoProtoAutorizacao), $aFont, 'T', 'L', 1, '');
         // algumas NFe podem estar sem o protocolo de uso portanto sua existencia deve ser
-        // testada antes de tentar obter a informa√ß√£o.
-        // NOTA : DANFE sem protocolo deve existir somente no caso de conting√™ncia !!!
-        // Al√©m disso, existem v√°rias NFes em conting√™ncia que eu recebo com protocolo de autoriza√ß√£o.
-        // Na minha opini√£o, dever√≠amos mostra-lo, mas o  manual  da NFe v4.01 diz outra coisa...
+        // testada antes de tentar obter a informaÁ„o.
+        // NOTA : DANFE sem protocolo deve existir somente no caso de contingÍncia !!!
+        // AlÈm disso, existem v·rias NFes em contingÍncia que eu recebo com protocolo de autorizaÁ„o.
+        // Na minha opini„o, deverÌamos mostra-lo, mas o  manual  da NFe v4.01 diz outra coisa...
         if (($this->tpEmis == 2 || $this->tpEmis == 5) && !$this->pNotaDPEC()) {
             $aFont = array('font'=>$this->fontePadrao, 'size'=>8, 'style'=>'B');
             $texto = $this->pFormat($chaveContingencia, "#### #### #### #### #### #### #### #### ####");
@@ -1365,42 +1366,42 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                 }
             }
         }
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
         //####################################################################################
-        //INSCRI√á√ÉO ESTADUAL
+        //INSCRI«√O ESTADUAL
         $w = round($maxW * 0.333, 0);
         $y += $h;
         $oldY += $h;
         $x = $oldX;
-        $texto = 'INSCRI√á√ÉO ESTADUAL';
+        $texto = 'INSCRI«√O ESTADUAL';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $texto = $this->pSimpleGetValue($this->emit, "IE");
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
-        //INSCRI√á√ÉO ESTADUAL DO SUBST. TRIBUT.
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
+        //INSCRI«√O ESTADUAL DO SUBST. TRIBUT.
         $x += $w;
-        $texto = 'INSCRI√á√ÉO ESTADUAL DO SUBST. TRIBUT.';
+        $texto = 'INSCRI«√O ESTADUAL DO SUBST. TRIBUT.';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $texto = ! empty($this->emit->getElementsByTagName("IEST")->item(0)->nodeValue)
              ? $this->emit->getElementsByTagName("IEST")->item(0)->nodeValue
              : '';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
         //CNPJ
         $x += $w;
         $w = ($maxW-(2*$w));
         $texto = 'CNPJ';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $texto = $this->emit->getElementsByTagName("CNPJ")->item(0)->nodeValue;
         $texto = $this->pFormat($texto, "##.###.###/####-##");
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
 
         //####################################################################################
-        //Indica√ß√£o de NF Homologa√ß√£o, cancelamento e falta de protocolo
+        //IndicaÁ„o de NF HomologaÁ„o, cancelamento e falta de protocolo
         $tpAmb = $this->ide->getElementsByTagName('tpAmb')->item(0)->nodeValue;
         //indicar cancelamento
         if ($this->pNotaCancelada()) {
@@ -1412,7 +1413,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $this->pdf->SetTextColor(90, 90, 90);
             $texto = "NFe CANCELADA";
             $aFont = array('font'=>$this->fontePadrao, 'size'=>48, 'style'=>'B');
-            $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
+            $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '');
             $this->pdf->SetTextColor(0, 0, 0);
         }
 
@@ -1423,11 +1424,11 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $h = 25;
             $w = $maxW-(2*$x);
             $this->pdf->SetTextColor(200, 200, 200);
-            $texto = "DANFE impresso em conting√™ncia -\n".
+            $texto = "DANFE impresso em contingÍncia -\n".
                      "DPEC regularmente recebido pela Receita\n".
                      "Federal do Brasil";
             $aFont = array('font'=>$this->fontePadrao, 'size'=>48, 'style'=>'B');
-            $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
+            $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '');
             $this->pdf->SetTextColor(0, 0, 0);
         }
         if ($this->pNotaDenegada()) {
@@ -1439,7 +1440,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $this->pdf->SetTextColor(90, 90, 90);
             $texto = "NFe USO DENEGADO";
             $aFont = array('font'=>$this->fontePadrao, 'size'=>48, 'style'=>'B');
-            $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
+            $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '');
             $y += $h;
             $h = 5;
             $w = $maxW-(2*$x);
@@ -1450,7 +1451,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             }
             $texto = "SEM VALOR FISCAL\n".$xMotivo;
             $aFont = array('font'=>$this->fontePadrao, 'size'=>48, 'style'=>'B');
-            $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
+            $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '');
             $this->pdf->SetTextColor(0, 0, 0);
         }
         //indicar sem valor
@@ -1466,11 +1467,16 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $this->pdf->SetTextColor(90, 90, 90);
             $texto = "SEM VALOR FISCAL";
             $aFont = array('font'=>$this->fontePadrao, 'size'=>48, 'style'=>'B');
-            $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
+            $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '');
             $aFont = array('font'=>$this->fontePadrao, 'size'=>30, 'style'=>'B');
-            $texto = "AMBIENTE DE HOMOLOGA√á√ÉO";
-            $this->pTextBox($x, $y+14, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
+            $texto = "AMBIENTE DE HOMOLOGA«√O";
+            $this->pTextBox($x, $y+14, $w, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '');
             $this->pdf->SetTextColor(0, 0, 0);
+            if (!isset($this->nfeProc)) {
+                $aFont = array('font'=>$this->fontePadrao, 'size'=>30, 'style'=>'B');
+                $texto = "FALTA PROTOCOLO DE APROVA«√O DA SEFAZ";
+                $this->pTextBox($x, $y+25, $w, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '');
+            }
         } else {
             $x = 10;
             if ($this->orientacao == 'P') {
@@ -1481,28 +1487,28 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $h = 5;
             $w = $maxW-(2*$x);
             $this->pdf->SetTextColor(90, 90, 90);
-            //indicar FALTA DO PROTOCOLO se NFe n√£o for em conting√™ncia
+            //indicar FALTA DO PROTOCOLO se NFe n„o for em contingÍncia
             if (($this->tpEmis == 2 || $this->tpEmis == 5) && !$this->pNotaDPEC()) {
-                //Conting√™ncia
-                $texto = "DANFE Emitido em Conting√™ncia";
+                //ContingÍncia
+                $texto = "DANFE Emitido em ContingÍncia";
                 $aFont = array('font'=>$this->fontePadrao, 'size'=>48, 'style'=>'B');
-                $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
+                $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '');
                 $aFont = array('font'=>$this->fontePadrao, 'size'=>30, 'style'=>'B');
-                $texto = "devido √† problemas t√©cnicos";
-                $this->pTextBox($x, $y+12, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
+                $texto = "devido ‡ problemas tÈcnicos";
+                $this->pTextBox($x, $y+12, $w, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '');
             } else {
                 if (!isset($this->nfeProc)) {
                     if (!$this->pNotaDPEC()) {
                         $texto = "SEM VALOR FISCAL";
                         $aFont = array('font'=>$this->fontePadrao, 'size'=>48, 'style'=>'B');
-                        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
+                        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '');
                     }
                     $aFont = array('font'=>$this->fontePadrao, 'size'=>30, 'style'=>'B');
-                    $texto = "FALTA PROTOCOLO DE APROVA√á√ÉO DA SEFAZ";
+                    $texto = "FALTA PROTOCOLO DE APROVA«√O DA SEFAZ";
                     if (!$this->pNotaDPEC()) {
-                        $this->pTextBox($x, $y+12, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
+                        $this->pTextBox($x, $y+12, $w, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '');
                     } else {
-                        $this->pTextBox($x, $y+25, $w, $h, $texto, $aFont, 'C', 'C', 0, '');
+                        $this->pTextBox($x, $y+25, $w, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '');
                     }
                 }//fim nefProc
             }//fim tpEmis
@@ -1513,17 +1519,17 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
 
     /**
      * destinatarioDANFE
-     * Monta o campo com os dados do destinat√°rio na DANFE. (retrato e paisagem)
+     * Monta o campo com os dados do destinat·rio na DANFE. (retrato e paisagem)
      *
      * @name   destinatarioDANFE
-     * @param  number $x Posi√ß√£o horizontal canto esquerdo
-     * @param  number $y Posi√ß√£o vertical canto superior
-     * @return number Posi√ß√£o vertical final
+     * @param  number $x PosiÁ„o horizontal canto esquerdo
+     * @param  number $y PosiÁ„o vertical canto superior
+     * @return number PosiÁ„o vertical final
      */
     protected function pDestinatarioDANFE($x = 0, $y = 0)
     {
         //####################################################################################
-        //DESTINAT√ÅRIO / REMETENTE
+        //DESTINAT¡RIO / REMETENTE
         $oldX = $x;
         $oldY = $y;
         if ($this->orientacao == 'P') {
@@ -1533,22 +1539,22 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         }
         $w = $maxW;
         $h = 7;
-        $texto = 'DESTINAT√ÅRIO / REMETENTE';
+        $texto = 'DESTINAT¡RIO / REMETENTE';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>7, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 0, '');
-        //NOME / RAZ√ÉO SOCIAL
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 0, '');
+        //NOME / RAZ√O SOCIAL
         $w = round($maxW*0.61, 0);
         $w1 = $w;
         $y += 3;
-        $texto = 'NOME / RAZ√ÉO SOCIAL';
+        $texto = 'NOME / RAZ√O SOCIAL';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $texto = $this->dest->getElementsByTagName("xNome")->item(0)->nodeValue;
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
         if ($this->orientacao == 'P') {
-            $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'L', 0, '');
+            $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'L', 0, '');
         } else {
-            $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'L', 1, '');
+            $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'L', 1, '');
         }
         //CNPJ / CPF
         $x += $w;
@@ -1556,7 +1562,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $w2 = $w;
         $texto = 'CNPJ / CPF';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         //Pegando valor do CPF/CNPJ
         if (! empty($this->dest->getElementsByTagName("CNPJ")->item(0)->nodeValue)) {
             $texto = $this->pFormat(
@@ -1571,14 +1577,14 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                     ) : '';
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
-        //DATA DA EMISS√ÉO
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
+        //DATA DA EMISS√O
         $x += $w;
         $w = $maxW-($w1+$w2);
         $wx = $w;
-        $texto = 'DATA DA EMISS√ÉO';
+        $texto = 'DATA DA EMISS√O';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $dEmi = ! empty($this->ide->getElementsByTagName("dEmi")->item(0)->nodeValue) ?
                 $this->ide->getElementsByTagName("dEmi")->item(0)->nodeValue : '';
         if ($dEmi == '') {
@@ -1590,52 +1596,52 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $texto = $this->pYmd2dmy($dEmi);
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
         if ($this->orientacao == 'P') {
-            $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
+            $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
         } else {
-            $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 1, '');
+            $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 1, '');
         }
-        //ENDERE√áO
+        //ENDERE«O
         $w = round($maxW*0.47, 0);
         $w1 = $w;
         $y += $h;
         $x = $oldX;
-        $texto = 'ENDERE√áO';
+        $texto = 'ENDERE«O';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $texto = $this->dest->getElementsByTagName("xLgr")->item(0)->nodeValue;
         $texto .= ', ' . $this->dest->getElementsByTagName("nro")->item(0)->nodeValue;
         $texto .= $this->pSimpleGetValue($this->dest, "xCpl", " - ");
 
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'L', 0, '', true);
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'L', 0, '', true);
         //BAIRRO / DISTRITO
         $x += $w;
         $w = round($maxW*0.21, 0);
         $w2 = $w;
         $texto = 'BAIRRO / DISTRITO';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $texto = $this->dest->getElementsByTagName("xBairro")->item(0)->nodeValue;
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
         //CEP
         $x += $w;
         $w = $maxW-$w1-$w2-$wx;
         $w2 = $w;
         $texto = 'CEP';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $texto = ! empty($this->dest->getElementsByTagName("CEP")->item(0)->nodeValue) ?
                 $this->dest->getElementsByTagName("CEP")->item(0)->nodeValue : '';
         $texto = $this->pFormat($texto, "#####-###");
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
-        //DATA DA SA√çDA
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
+        //DATA DA SAÕDA
         $x += $w;
         $w = $wx;
-        $texto = 'DATA DA SA√çDA/ENTRADA';
+        $texto = 'DATA DA SAÕDA/ENTRADA';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $dSaiEnt = ! empty($this->ide->getElementsByTagName("dSaiEnt")->item(0)->nodeValue) ?
                 $this->ide->getElementsByTagName("dSaiEnt")->item(0)->nodeValue : '';
         if ($dSaiEnt == '') {
@@ -1646,56 +1652,56 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         }
         $texto = $this->pYmd2dmy($dSaiEnt);
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
-        //MUNIC√çPIO
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
+        //MUNICÕPIO
         $w = $w1;
         $y += $h;
         $x = $oldX;
-        $texto = 'MUNIC√çPIO';
+        $texto = 'MUNICÕPIO';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $texto = $this->dest->getElementsByTagName("xMun")->item(0)->nodeValue;
         if (strtoupper(trim($texto)) == "EXTERIOR" && $this->dest->getElementsByTagName("xPais")->length > 0) {
             $texto .= " - " .  $this->dest->getElementsByTagName("xPais")->item(0)->nodeValue;
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'L', 0, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'L', 0, '');
         //UF
         $x += $w;
         $w = 8;
         $texto = 'UF';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $texto = $this->dest->getElementsByTagName("UF")->item(0)->nodeValue;
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
         //FONE / FAX
         $x += $w;
         $w = round(($maxW -$w1-$wx-8)/2, 0);
         $w3 = $w;
         $texto = 'FONE / FAX';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $texto = ! empty($this->dest->getElementsByTagName("fone")->item(0)->nodeValue) ?
                 $this->dest->getElementsByTagName("fone")->item(0)->nodeValue : '';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
-        //INSCRI√á√ÉO ESTADUAL
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
+        //INSCRI«√O ESTADUAL
         $x += $w;
         $w = $maxW -$w1-$wx-8-$w3;
-        $texto = 'INSCRI√á√ÉO ESTADUAL';
+        $texto = 'INSCRI«√O ESTADUAL';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $IE = $this->dest->getElementsByTagName("IE");
         $texto = ($IE && $IE->length > 0) ? $IE->item(0)->nodeValue : '';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
-        //HORA DA SA√çDA
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
+        //HORA DA SAÕDA
         $x += $w;
         $w = $wx;
-        $texto = 'HORA DA SA√çDA/ENTRADA';
+        $texto = 'HORA DA SAÕDA/ENTRADA';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $hSaiEnt = ! empty($this->ide->getElementsByTagName("hSaiEnt")->item(0)->nodeValue) ?
                 $this->ide->getElementsByTagName("hSaiEnt")->item(0)->nodeValue : '';
         if ($hSaiEnt == '') {
@@ -1708,9 +1714,9 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         }
         $texto = $hSaiEnt;
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
         return ($y + $h);
-    } //fim da fun√ß√£o destinatarioDANFE
+    } //fim da funÁ„o destinatarioDANFE
 
      /**
      * pGetTextoFatura
@@ -1727,14 +1733,14 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                 $textoIndPag="";
                 $indPag = $this->pSimpleGetValue($this->ide, "indPag");
                 if ($indPag == 0) {
-                    $textoIndPag = "Pagamento √† Vista - ";
+                    $textoIndPag = "Pagamento ‡ Vista - ";
                 } elseif ($indPag == 1) {
-                    $textoIndPag = "Pagamento √† Prazo - ";
+                    $textoIndPag = "Pagamento ‡ Prazo - ";
                 }
                 $nFat = $this->pSimpleGetValue($fat, "nFat", "Fatura: ");
                 $vOrig = $this->pSimpleGetValue($fat, "vOrig", " Valor Original: ");
                 $vDesc = $this->pSimpleGetValue($fat, "vDesc", " Desconto: ");
-                $vLiq = $this->pSimpleGetValue($fat, "vLiq", " Valor L√≠quido: ");
+                $vLiq = $this->pSimpleGetValue($fat, "vLiq", " Valor LÌquido: ");
                 $texto = $textoIndPag . $nFat . $vOrig . $vDesc . $vLiq;
                 return $texto;
             }
@@ -1744,7 +1750,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
 
      /**
      * pSizeExtraTextoFatura
-     * Calcula o espa√ßo ocupado pelo texto da fatura. Este espa√ßo s√≥ √© utilizado quando n√£o houver duplicata.
+     * Calcula o espaÁo ocupado pelo texto da fatura. Este espaÁo sÛ È utilizado quando n„o houver duplicata.
       *
      * @name   pSizeExtraTextoFatura
      * @return integer
@@ -1764,9 +1770,9 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      * Monta o campo de duplicatas da DANFE (retrato e paisagem)
      *
      * @name   faturaDANFE
-     * @param  number $x Posi√ß√£o horizontal canto esquerdo
-     * @param  number $y Posi√ß√£o vertical canto superior
-     * @return number Posi√ß√£o vertical final
+     * @param  number $x PosiÁ„o horizontal canto esquerdo
+     * @param  number $y PosiÁ„o vertical canto superior
+     * @return number PosiÁ„o vertical final
      */
     protected function pFaturaDANFE($x, $y)
     {
@@ -1786,7 +1792,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             }
             $h = 8;
             $aFont = array('font'=>$this->fontePadrao, 'size'=>7, 'style'=>'B');
-            $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 0, '');
+            $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 0, '');
             $y += 3;
             $dups = "";
             $dupcont = 0;
@@ -1807,11 +1813,6 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                 $w = 28;
             }
             $increm = 1;
-            if ($this->orientacao == 'P') {
-               $maxDupCont = 6;
-            } else {
-               $maxDupCont = 8;
-            }
             foreach ($this->dup as $k => $d) {
                 $nDup = ! empty($this->dup->item($k)->getElementsByTagName('nDup')->item(0)->nodeValue) ?
                         $this->dup->item($k)->getElementsByTagName('nDup')->item(0)->nodeValue : '';
@@ -1845,6 +1846,11 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                 $this->pTextBox($x, $y, $w, $h, $vDup, $aFont, 'B', 'R', 0, '');
                 $x += $w+$increm;
                 $dupcont += 1;
+                if ($this->orientacao == 'P') {
+                    $maxDupCont = 6;
+                } else {
+                    $maxDupCont = 8;
+                }
                 if ($dupcont > $maxDupCont) {
                     $y += 9;
                     $x = $oldx;
@@ -1865,20 +1871,20 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $linha = 0;
             return ($y-2);
         }
-    } //fim da fun√ß√£o faturaDANFE
+    } //fim da funÁ„o faturaDANFE
 
     /**
      * impostoDanfeHelper
      * Auxilia a montagem dos campos de impostos e totais da DANFE
      *
      * @name   impostoDanfeHelper
-     * @param  float $x Posi√ß√£o horizontal canto esquerdo
-     * @param  float $y Posi√ß√£o vertical canto superior
+     * @param  float $x PosiÁ„o horizontal canto esquerdo
+     * @param  float $y PosiÁ„o vertical canto superior
      * @param  float $w Largura do campo
      * @param  float $h Altura do campo
-     * @param  float $h T√≠tulo do campo
+     * @param  float $h TÌtulo do campo
      * @param  float $h Valor do imposto
-     * @return float Sugest√£o do $x do pr√≥ximo imposto
+     * @return float Sugest„o do $x do prÛximo imposto
      */
     protected function pImpostoDanfeHelper($x, $y, $w, $h, $titulo, $campoImposto)
     {
@@ -1904,9 +1910,9 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      * impostoDANFE
      * Monta o campo de impostos e totais da DANFE (retrato e paisagem)
      *
-     * @param  number $x Posi√ß√£o horizontal canto esquerdo
-     * @param  number $y Posi√ß√£o vertical canto superior
-     * @return number Posi√ß√£o vertical final
+     * @param  number $x PosiÁ„o horizontal canto esquerdo
+     * @param  number $y PosiÁ„o vertical canto superior
+     * @return number PosiÁ„o vertical final
      */
     protected function pImpostoDANFE($x, $y)
     {
@@ -1932,16 +1938,16 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $w = $maxW / $campos_por_linha;
 
         $aFont = array('font'=>$this->fontePadrao, 'size'=>7, 'style'=>'B');
-        $texto = "C√ÅLCULO DO IMPOSTO";
+        $texto = "C¡LCULO DO IMPOSTO";
         $this->pTextBox($x, $y, $title_size, 8, $texto, $aFont, 'T', 'L', 0, '');
         $y += 3;
         $h = 7;
 
-        $x = $this->pImpostoDanfeHelper($x, $y, $w, $h, "BASE DE C√ÅLC. DO ICMS", "vBC");
-        $x = $this->pImpostoDanfeHelper($x, $y, $w, $h, "VALOR DO ICMS", "vICMS");
-        $x = $this->pImpostoDanfeHelper($x, $y, $w, $h, "BASE DE C√ÅLC. ICMS S.T.", "vBCST");
-        $x = $this->pImpostoDanfeHelper($x, $y, $w, $h, "VALOR DO ICMS SUBST.", "vST");
-        $x = $this->pImpostoDanfeHelper($x, $y, $w, $h, "V. IMP. IMPORTA√á√ÉO", "vII");
+        $x = $this->pImpostoDanfeHelper($x, $y, $w, $h, utf8_encode("BASE DE C¡LC. DO ICMS"), "vBC");
+        $x = $this->pImpostoDanfeHelper($x, $y, $w, $h, utf8_encode("VALOR DO ICMS"), "vICMS");
+        $x = $this->pImpostoDanfeHelper($x, $y, $w, $h, utf8_encode("BASE DE C¡LC. ICMS S.T."), "vBCST");
+        $x = $this->pImpostoDanfeHelper($x, $y, $w, $h, utf8_encode("VALOR DO ICMS SUBST."), "vST");
+        $x = $this->pImpostoDanfeHelper($x, $y, $w, $h, utf8_encode("V. IMP. IMPORTA«√O"), "vII");
 
         if ($this->exibirIcmsInterestadual) {
             $x = $this->pImpostoDanfeHelper($x, $y, $w, $h, "V. ICMS UF REMET.", "vICMSUFRemet");
@@ -1983,9 +1989,9 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      * Monta o campo de transportes da DANFE (retrato e paisagem)
      *
      * @name   transporteDANFE
-     * @param  float $x Posi√ß√£o horizontal canto esquerdo
-     * @param  float $y Posi√ß√£o vertical canto superior
-     * @return float Posi√ß√£o vertical final
+     * @param  float $x PosiÁ„o horizontal canto esquerdo
+     * @param  float $y PosiÁ„o vertical canto superior
+     * @return float PosiÁ„o vertical final
      */
     protected function pTransporteDANFE($x, $y)
     {
@@ -2001,13 +2007,13 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $w = $maxW;
         $h = 7;
         $aFont = array('font'=>$this->fontePadrao, 'size'=>7, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 0, '');
-        //NOME / RAZ√ÉO SOCIAL
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 0, '');
+        //NOME / RAZ√O SOCIAL
         $w1 = $maxW*0.29;
         $y += 3;
-        $texto = 'NOME / RAZ√ÉO SOCIAL';
+        $texto = 'NOME / RAZ√O SOCIAL';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w1, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w1, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         if (isset($this->transporta)) {
             $texto = ! empty($this->transporta->getElementsByTagName("xNome")->item(0)->nodeValue) ?
                     $this->transporta->getElementsByTagName("xNome")->item(0)->nodeValue : '';
@@ -2015,13 +2021,13 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $texto = '';
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w1, $h, $texto, $aFont, 'B', 'L', 0, '');
+        $this->pTextBox($x, $y, $w1, $h, utf8_encode($texto), $aFont, 'B', 'L', 0, '');
         //FRETE POR CONTA
         $x += $w1;
         $w2 = $maxW*0.15;
         $texto = 'FRETE POR CONTA';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w2, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $tipoFrete = ! empty($this->transp->getElementsByTagName("modFrete")->item(0)->nodeValue) ?
                 $this->transp->getElementsByTagName("modFrete")->item(0)->nodeValue : '0';
         switch ($tipoFrete) {
@@ -2039,12 +2045,12 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                 break;
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w2, $h, $texto, $aFont, 'C', 'C', 1, '');
-        //C√ìDIGO ANTT
+        $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'C', 'C', 1, '');
+        //C”DIGO ANTT
         $x += $w2;
-        $texto = 'C√ìDIGO ANTT';
+        $texto = 'C”DIGO ANTT';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w2, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         if (isset($this->veicTransp)) {
             $texto = ! empty($this->veicTransp->getElementsByTagName("RNTC")->item(0)->nodeValue) ?
                     $this->veicTransp->getElementsByTagName("RNTC")->item(0)->nodeValue : '';
@@ -2052,12 +2058,12 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $texto = '';
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w2, $h, $texto, $aFont, 'B', 'C', 0, '');
-        //PLACA DO VE√çC
+        $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
+        //PLACA DO VEÕC
         $x += $w2;
-        $texto = 'PLACA DO VE√çCULO';
+        $texto = 'PLACA DO VEÕCULO';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w2, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         if (isset($this->veicTransp)) {
             $texto = ! empty($this->veicTransp->getElementsByTagName("placa")->item(0)->nodeValue) ?
                     $this->veicTransp->getElementsByTagName("placa")->item(0)->nodeValue : '';
@@ -2068,13 +2074,13 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $texto = '';
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w2, $h, $texto, $aFont, 'B', 'C', 0, '');
+        $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
         //UF
         $x += $w2;
         $w3 = round($maxW*0.04, 0);
         $texto = 'UF';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w3, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w3, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         if (isset($this->veicTransp)) {
             $texto = ! empty($this->veicTransp->getElementsByTagName("UF")->item(0)->nodeValue) ?
                     $this->veicTransp->getElementsByTagName("UF")->item(0)->nodeValue : '';
@@ -2085,13 +2091,13 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $texto = '';
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w3, $h, $texto, $aFont, 'B', 'C', 0, '');
+        $this->pTextBox($x, $y, $w3, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
         //CNPJ / CPF
         $x += $w3;
         $w = $maxW-($w1+3*$w2+$w3);
         $texto = 'CNPJ / CPF';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         if (isset($this->transporta)) {
             $texto = ! empty($this->transporta->getElementsByTagName("CNPJ")->item(0)->nodeValue) ?
                     $this->pFormat(
@@ -2109,16 +2115,16 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $texto = '';
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
         //#####################################################################
-        //ENDERE√áO
+        //ENDERE«O
         $y += $h;
         $x = $oldX;
         $h = 7;
         $w1 = $maxW*0.44;
-        $texto = 'ENDERE√áO';
+        $texto = 'ENDERE«O';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w1, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w1, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         if (isset($this->transporta)) {
             $texto = ! empty($this->transporta->getElementsByTagName("xEnder")->item(0)->nodeValue) ?
                     $this->transporta->getElementsByTagName("xEnder")->item(0)->nodeValue : '';
@@ -2126,13 +2132,13 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $texto = '';
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w1, $h, $texto, $aFont, 'B', 'L', 0, '');
-        //MUNIC√çPIO
+        $this->pTextBox($x, $y, $w1, $h, utf8_encode($texto), $aFont, 'B', 'L', 0, '');
+        //MUNICÕPIO
         $x += $w1;
         $w2 = round($maxW*0.30, 0);
-        $texto = 'MUNIC√çPIO';
+        $texto = 'MUNICÕPIO';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w2, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         if (isset($this->transporta)) {
             $texto = ! empty($this->transporta->getElementsByTagName("xMun")->item(0)->nodeValue) ?
                     $this->transporta->getElementsByTagName("xMun")->item(0)->nodeValue : '';
@@ -2140,13 +2146,13 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $texto = '';
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w2, $h, $texto, $aFont, 'B', 'C', 0, '');
+        $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
         //UF
         $x += $w2;
         $w3 = round($maxW*0.04, 0);
         $texto = 'UF';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w3, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w3, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         if (isset($this->transporta)) {
             $texto = ! empty($this->transporta->getElementsByTagName("UF")->item(0)->nodeValue) ?
                     $this->transporta->getElementsByTagName("UF")->item(0)->nodeValue : '';
@@ -2154,13 +2160,13 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $texto = '';
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w3, $h, $texto, $aFont, 'B', 'C', 0, '');
-        //INSCRI√á√ÉO ESTADUAL
+        $this->pTextBox($x, $y, $w3, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
+        //INSCRI«√O ESTADUAL
         $x += $w3;
         $w = $maxW-($w1+$w2+$w3);
-        $texto = 'INSCRI√á√ÉO ESTADUAL';
+        $texto = 'INSCRI«√O ESTADUAL';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $texto = '';
         if (isset($this->transporta)) {
             if (! empty($this->transporta->getElementsByTagName("IE")->item(0)->nodeValue)) {
@@ -2168,7 +2174,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             }
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'C', 0, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
         //Tratar Multiplos volumes
         $volumes = $this->transp->getElementsByTagName('vol');
         $quantidade = 0;
@@ -2188,7 +2194,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $texto = ! empty($this->transp->getElementsByTagName("esp")->item(0)->nodeValue) ?
                     $this->transp->getElementsByTagName("esp")->item(0)->nodeValue : '';
             if ($texto != $especie && $especie != '') {
-                //tem v√°rias especies
+                //tem v·rias especies
                 $especie = 'VARIAS';
             } else {
                 $especie = $texto;
@@ -2196,7 +2202,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $texto = ! empty($this->transp->getElementsByTagName("marca")->item(0)->nodeValue) ?
                     $this->transp->getElementsByTagName("marca")->item(0)->nodeValue : '';
             if ($texto != $marca && $marca != '') {
-                //tem v√°rias especies
+                //tem v·rias especies
                 $marca = 'VARIAS';
             } else {
                 $marca = $texto;
@@ -2204,7 +2210,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $texto = ! empty($this->transp->getElementsByTagName("nVol")->item(0)->nodeValue) ?
                     $this->transp->getElementsByTagName("nVol")->item(0)->nodeValue : '';
             if ($texto != $numero && $numero != '') {
-                //tem v√°rias especies
+                //tem v·rias especies
                 $numero = 'VARIOS';
             } else {
                 $numero = $texto;
@@ -2219,64 +2225,64 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $w1 = round($maxW*0.10, 0);
         $texto = 'QUANTIDADE';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w1, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w1, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         if (!empty($quantidade)) {
             $texto = $quantidade;
             $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-            $this->pTextBox($x, $y, $w1, $h, $texto, $aFont, 'B', 'C', 0, '');
+            $this->pTextBox($x, $y, $w1, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
         }
-        //ESP√âCIE
+        //ESP…CIE
         $x += $w1;
         $w2 = round($maxW*0.17, 0);
-        $texto = 'ESP√âCIE';
+        $texto = 'ESP…CIE';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w2, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $texto = $especie;
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w2, $h, $texto, $aFont, 'B', 'C', 0, '');
+        $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
         //MARCA
         $x += $w2;
         $texto = 'MARCA';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w2, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $texto = ! empty($this->transp->getElementsByTagName("marca")->item(0)->nodeValue) ?
                 $this->transp->getElementsByTagName("marca")->item(0)->nodeValue : '';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w2, $h, $texto, $aFont, 'B', 'C', 0, '');
-        //NUMERA√á√ÉO
+        $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
+        //NUMERA«√O
         $x += $w2;
-        $texto = 'NUMERA√á√ÉO';
+        $texto = 'NUMERA«√O';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w2, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         $texto = $numero;
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w2, $h, $texto, $aFont, 'B', 'C', 0, '');
+        $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'B', 'C', 0, '');
         //PESO BRUTO
         $x += $w2;
         $w3 = round($maxW*0.20, 0);
         $texto = 'PESO BRUTO';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w3, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w3, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         if (is_numeric($pesoBruto) && $pesoBruto > 0) {
             $texto = number_format($pesoBruto, 3, ",", ".");
         } else {
             $texto = '';
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w3, $h, $texto, $aFont, 'B', 'R', 0, '');
-        //PESO L√çQUIDO
+        $this->pTextBox($x, $y, $w3, $h, utf8_encode($texto), $aFont, 'B', 'R', 0, '');
+        //PESO LÕQUIDO
         $x += $w3;
         $w = $maxW -($w1+3*$w2+$w3);
-        $texto = 'PESO L√çQUIDO';
+        $texto = 'PESO LÕQUIDO';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         if (is_numeric($pesoLiquido) && $pesoLiquido > 0) {
             $texto = number_format($pesoLiquido, 3, ",", ".");
         } else {
             $texto = '';
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'R', 0, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'R', 0, '');
         return ($y+$h);
     } //fim transporteDANFE
 
@@ -2299,7 +2305,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
 
     /**
      * descricaoProduto
-     * Monta a string de descri√ß√£o de cada Produto
+     * Monta a string de descriÁ„o de cada Produto
      *
      * @name   descricaoProduto
      * @param  DOMNode itemProd
@@ -2338,7 +2344,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         if (isset($med)) {
             $i = 0;
             while ($i < $med->length) {
-                $medTxt .= $this->pSimpleGetValue($med->item($i), 'nLote', '\n Lote: ');
+                $medTxt .= $this->pSimpleGetValue($med->item($i), 'nLote', ' Lote: ');
                 $medTxt .= $this->pSimpleGetValue($med->item($i), 'qLote', ' Quant: ');
                 $medTxt .= $this->pSimpleGetDate($med->item($i), 'dFab', ' Fab: ');
                 $medTxt .= $this->pSimpleGetDate($med->item($i), 'dVal', ' Val: ');
@@ -2365,12 +2371,12 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      * Monta o campo de itens da DANFE (retrato e paisagem)
      *
      * @name   itensDANFE
-     * @param  float $x       Posi√ß√£o horizontal canto esquerdo
-     * @param  float $y       Posi√ß√£o vertical canto superior
-     * @param  float $nInicio N√∫mero do item inicial
-     * @param  float $max     N√∫mero do item final
-     * @param  float $hmax    Altura m√°xima do campo de itens em mm
-     * @return float Posi√ß√£o vertical final
+     * @param  float $x       PosiÁ„o horizontal canto esquerdo
+     * @param  float $y       PosiÁ„o vertical canto superior
+     * @param  float $nInicio N˙mero do item inicial
+     * @param  float $max     N˙mero do item final
+     * @param  float $hmax    Altura m·xima do campo de itens em mm
+     * @return float PosiÁ„o vertical final
      */
     protected function pItensDANFE($x, $y, &$nInicio, $hmax, $pag = 0, $totpag = 0, $hCabecItens = 7)
     {
@@ -2378,20 +2384,20 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $oldY = $y;
         $totItens = $this->det->length;
         //#####################################################################
-        //DADOS DOS PRODUTOS / SERVI√áOS
-        $texto = "DADOS DOS PRODUTOS / SERVI√áOS ";
+        //DADOS DOS PRODUTOS / SERVI«OS
+        $texto = "DADOS DOS PRODUTOS / SERVI«OS ";
         if ($this->orientacao == 'P') {
             $w = $this->wPrint;
         } else {
-            if ($nInicio < 2) { // primeira p√°gina
+            if ($nInicio < 2) { // primeira p·gina
                 $w = $this->wPrint - $this->wCanhoto;
-            } else { // p√°ginas seguintes
+            } else { // p·ginas seguintes
                 $w = $this->wPrint;
             }
         }
         $h = 4;
         $aFont = array('font'=>$this->fontePadrao, 'size'=>7, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 0, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 0, '');
         $y += 3;
         //desenha a caixa dos dados dos itens da NF
         $hmax += 1;
@@ -2399,106 +2405,102 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $this->pTextBox($x, $y, $w, $hmax);
         //##################################################################################
         // cabecalho LOOP COM OS DADOS DOS PRODUTOS
-        //C√ìDIGO PRODUTO
-        $texto = "C√ìDIGO PRODUTO";
+        //C”DIGO PRODUTO
+        $texto = "C”DIGO PRODUTO";
         $w1 = round($w*0.09, 0);
         $h = 4;
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w1, $h, $texto, $aFont, 'C', 'C', 0, '', false);
+        $this->pTextBox($x, $y, $w1, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '', false);
         $this->pdf->Line($x+$w1, $y, $x+$w1, $y+$hmax);
-        //DESCRI√á√ÉO DO PRODUTO / SERVI√áO
+        //DESCRI«√O DO PRODUTO / SERVI«O
         $x += $w1;
         $w2 = round($w*0.28, 0);
-        $texto = 'DESCRI√á√ÉO DO PRODUTO / SERVI√áO';
+        $texto = 'DESCRI«√O DO PRODUTO / SERVI«O';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w2, $h, $texto, $aFont, 'C', 'C', 0, '', false);
+        $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '', false);
         $this->pdf->Line($x+$w2, $y, $x+$w2, $y+$hmax);
         //NCM/SH
         $x += $w2;
         $w3 = round($w*0.06, 0);
         $texto = 'NCM/SH';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w3, $h, $texto, $aFont, 'C', 'C', 0, '', false);
+        $this->pTextBox($x, $y, $w3, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '', false);
         $this->pdf->Line($x+$w3, $y, $x+$w3, $y+$hmax);
         //O/CST
         $x += $w3;
-        $w4 = round($w*0.05, 0);
-        if ($this->pSimpleGetValue($this->emit, 'CRT') == '3'){
-            $texto = 'O/CST'; // SE REGIME NORMAL EXIBE CST
-        }else{
-            $texto = 'O/CSOSN'; // SE REGIME SIMPLES EXIBE CSOSN
-        }
+        $w4 = round($w*0.04, 0);
+        $texto = 'O/CST';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w4, $h, $texto, $aFont, 'C', 'C', 0, '', false);
+        $this->pTextBox($x, $y, $w4, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '', false);
         $this->pdf->Line($x+$w4, $y, $x+$w4, $y+$hmax);
         //CFOP
         $x += $w4;
         $w5 = round($w*0.04, 0);
         $texto = 'CFOP';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w5, $h, $texto, $aFont, 'C', 'C', 0, '', false);
+        $this->pTextBox($x, $y, $w5, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '', false);
         $this->pdf->Line($x+$w5, $y, $x+$w5, $y+$hmax);
         //UN
         $x += $w5;
         $w6 = round($w*0.03, 0);
         $texto = 'UN';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w6, $h, $texto, $aFont, 'C', 'C', 0, '', false);
+        $this->pTextBox($x, $y, $w6, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '', false);
         $this->pdf->Line($x+$w6, $y, $x+$w6, $y+$hmax);
         //QUANT
         $x += $w6;
         $w7 = round($w*0.07, 0);
         $texto = 'QUANT';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w7, $h, $texto, $aFont, 'C', 'C', 0, '', false);
+        $this->pTextBox($x, $y, $w7, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '', false);
         $this->pdf->Line($x+$w7, $y, $x+$w7, $y+$hmax);
         //VALOR UNIT
         $x += $w7;
         $w8 = round($w*0.06, 0);
         $texto = 'VALOR UNIT';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w8, $h, $texto, $aFont, 'C', 'C', 0, '', false);
+        $this->pTextBox($x, $y, $w8, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '', false);
         $this->pdf->Line($x+$w8, $y, $x+$w8, $y+$hmax);
         //VALOR TOTAL
         $x += $w8;
         $w9 = round($w*0.06, 0);
         $texto = 'VALOR TOTAL';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w9, $h, $texto, $aFont, 'C', 'C', 0, '', false);
+        $this->pTextBox($x, $y, $w9, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '', false);
         $this->pdf->Line($x+$w9, $y, $x+$w9, $y+$hmax);
-        //B.C√ÅLC ICMS
+        //B.C¡LC ICMS
         $x += $w9;
         $w10 = round($w*0.06, 0);
-        $texto = 'B.C√ÅLC ICMS';
+        $texto = 'B.C¡LC ICMS';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w10, $h, $texto, $aFont, 'C', 'C', 0, '', false);
+        $this->pTextBox($x, $y, $w10, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '', false);
         $this->pdf->Line($x+$w10, $y, $x+$w10, $y+$hmax);
         //VALOR ICMS
         $x += $w10;
         $w11 = round($w*0.06, 0);
         $texto = 'VALOR ICMS';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w11, $h, $texto, $aFont, 'C', 'C', 0, '', false);
+        $this->pTextBox($x, $y, $w11, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '', false);
         $this->pdf->Line($x+$w11, $y, $x+$w11, $y+$hmax);
         //VALOR IPI
         $x += $w11;
         $w12 = round($w*0.05, 0);
         $texto = 'VALOR IPI';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w12, $h, $texto, $aFont, 'C', 'C', 0, '', false);
+        $this->pTextBox($x, $y, $w12, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '', false);
         $this->pdf->Line($x+$w12, $y, $x+$w12, $y+$hmax);
-        //AL√çQ. ICMS
+        //ALÕQ. ICMS
         $x += $w12;
         $w13 = round($w*0.035, 0);
-        $texto = 'AL√çQ. ICMS';
+        $texto = 'ALÕQ. ICMS';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w13, $h, $texto, $aFont, 'C', 'C', 0, '', false);
+        $this->pTextBox($x, $y, $w13, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '', false);
         $this->pdf->Line($x+$w13, $y, $x+$w13, $y+$hmax);
-        //AL√çQ. IPI
+        //ALÕQ. IPI
         $x += $w13;
         $w14 = $w-($w1+$w2+$w3+$w4+$w5+$w6+$w7+$w8+$w9+$w10+$w11+$w12+$w13);
-        $texto = 'AL√çQ. IPI';
-        $this->pTextBox($x, $y, $w14, $h, $texto, $aFont, 'C', 'C', 0, '', false);
+        $texto = 'ALÕQ. IPI';
+        $this->pTextBox($x, $y, $w14, $h, utf8_encode($texto), $aFont, 'C', 'C', 0, '', false);
         $this->pdf->Line($oldX, $y+$h+1, $oldX + $w, $y+$h+1);
         $y += 5;
         //##################################################################################
@@ -2520,8 +2522,8 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                 $hUsado += $h;
                 if ($pag != $totpag) {
                     if ($hUsado >= $hmax && $i < $totItens) {
-                        //ultrapassa a capacidade para uma √∫nica p√°gina
-                        //o restante dos dados ser√£o usados nas proximas paginas
+                        //ultrapassa a capacidade para uma ˙nica p·gina
+                        //o restante dos dados ser„o usados nas proximas paginas
                         $nInicio = $i;
                         break;
                     }
@@ -2533,19 +2535,20 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                 $x=$oldX;
                 //codigo do produto
                 $texto = $prod->getElementsByTagName("cProd")->item(0)->nodeValue;
-                $this->pTextBox($x, $y, $w1, $h, $texto, $aFont, 'T', 'C', 0, '');
+                $this->pTextBox($x, $y, $w1, $h, utf8_encode($texto), $aFont, 'T', 'C', 0, '');
                 $x += $w1;
-                //DESCRI√á√ÉO
+                //DESCRI«√O
+                $texto = $prod->getElementsByTagName("xProd")->item(0)->nodeValue;
                 if ($this->orientacao == 'P') {
-                    $this->pTextBox($x, $y, $w2, $h, $textoProduto, $aFont, 'T', 'L', 0, '', false);
+                    $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'T', 'L', 0, '', false);
                 } else {
-                    $this->pTextBox($x, $y, $w2, $h, $textoProduto, $aFont, 'T', 'L', 0, '', false);
+                    $this->pTextBox($x, $y, $w2, $h, utf8_encode($texto), $aFont, 'T', 'L', 0, '', false);
                 }
                 $x += $w2;
                 //NCM
                 $texto = ! empty($prod->getElementsByTagName("NCM")->item(0)->nodeValue) ?
                         $prod->getElementsByTagName("NCM")->item(0)->nodeValue : '';
-                $this->pTextBox($x, $y, $w3, $h, $texto, $aFont, 'T', 'C', 0, '');
+                $this->pTextBox($x, $y, $w3, $h, utf8_encode($texto), $aFont, 'T', 'C', 0, '');
                 $x += $w3;
                 //CST
                 if (isset($ICMS)) {
@@ -2553,16 +2556,16 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                     $cst =  $this->pSimpleGetValue($ICMS, "CST");
                     $csosn =  $this->pSimpleGetValue($ICMS, "CSOSN");
                     $texto = $origem.$cst.$csosn;
-                    $this->pTextBox($x, $y, $w4, $h, $texto, $aFont, 'T', 'C', 0, '');
+                    $this->pTextBox($x, $y, $w4, $h, utf8_encode($texto), $aFont, 'T', 'C', 0, '');
                 }
                 //CFOP
                 $x += $w4;
                 $texto = $prod->getElementsByTagName("CFOP")->item(0)->nodeValue;
-                $this->pTextBox($x, $y, $w5, $h, $texto, $aFont, 'T', 'C', 0, '');
+                $this->pTextBox($x, $y, $w5, $h, utf8_encode($texto), $aFont, 'T', 'C', 0, '');
                 //Unidade
                 $x += $w5;
                 $texto = $prod->getElementsByTagName("uCom")->item(0)->nodeValue;
-                $this->pTextBox($x, $y, $w6, $h, $texto, $aFont, 'T', 'C', 0, '');
+                $this->pTextBox($x, $y, $w6, $h, utf8_encode($texto), $aFont, 'T', 'C', 0, '');
                 $x += $w6;
                 if ($this->orientacao == 'P') {
                     $alinhamento = 'R';
@@ -2571,18 +2574,18 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                 }
                 // QTDADE
                 $texto = number_format($prod->getElementsByTagName("qCom")->item(0)->nodeValue, 4, ",", ".");
-                $this->pTextBox($x, $y, $w7, $h, $texto, $aFont, 'T', $alinhamento, 0, '');
+                $this->pTextBox($x, $y, $w7, $h, utf8_encode($texto), $aFont, 'T', $alinhamento, 0, '');
                 $x += $w7;
-                // Valor Unit√°rio
+                // Valor Unit·rio
                 $texto = number_format($prod->getElementsByTagName("vUnCom")->item(0)->nodeValue, 4, ",", ".");
-                $this->pTextBox($x, $y, $w8, $h, $texto, $aFont, 'T', $alinhamento, 0, '');
+                $this->pTextBox($x, $y, $w8, $h, utf8_encode($texto), $aFont, 'T', $alinhamento, 0, '');
                 $x += $w8;
                 // Valor do Produto
                 $texto = "";
                 if (is_numeric($prod->getElementsByTagName("vProd")->item(0)->nodeValue)) {
                     $texto = number_format($prod->getElementsByTagName("vProd")->item(0)->nodeValue, 2, ",", ".");
                 }
-                $this->pTextBox($x, $y, $w9, $h, $texto, $aFont, 'T', $alinhamento, 0, '');
+                $this->pTextBox($x, $y, $w9, $h, utf8_encode($texto), $aFont, 'T', $alinhamento, 0, '');
                 //Valor da Base de calculo
                 $x += $w9;
                 if (isset($ICMS)) {
@@ -2593,7 +2596,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                                 ",",
                                 "."
                             ) : '0, 00';
-                    $this->pTextBox($x, $y, $w10, $h, $texto, $aFont, 'T', $alinhamento, 0, '');
+                    $this->pTextBox($x, $y, $w10, $h, utf8_encode($texto), $aFont, 'T', $alinhamento, 0, '');
                 }
                 //Valor do ICMS
                 $x += $w10;
@@ -2605,7 +2608,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                                 ",",
                                 "."
                             ) : '0, 00';
-                    $this->pTextBox($x, $y, $w11, $h, $texto, $aFont, 'T', $alinhamento, 0, '');
+                    $this->pTextBox($x, $y, $w11, $h, utf8_encode($texto), $aFont, 'T', $alinhamento, 0, '');
                 }
                 //Valor do IPI
                 $x += $w11;
@@ -2615,7 +2618,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                 } else {
                     $texto = '';
                 }
-                $this->pTextBox($x, $y, $w12, $h, $texto, $aFont, 'T', $alinhamento, 0, '');
+                $this->pTextBox($x, $y, $w12, $h, utf8_encode($texto), $aFont, 'T', $alinhamento, 0, '');
                 // %ICMS
                 $x += $w12;
                 if (isset($ICMS)) {
@@ -2626,7 +2629,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                                 ",",
                                 "."
                             ) : '0, 00';
-                    $this->pTextBox($x, $y, $w13, $h, $texto, $aFont, 'T', 'C', 0, '');
+                    $this->pTextBox($x, $y, $w13, $h, utf8_encode($texto), $aFont, 'T', 'C', 0, '');
                 }
                 //%IPI
                 $x += $w13;
@@ -2636,7 +2639,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
                 } else {
                     $texto = '';
                 }
-                $this->pTextBox($x, $y, $w14, $h, $texto, $aFont, 'T', 'C', 0, '');
+                $this->pTextBox($x, $y, $w14, $h, utf8_encode($texto), $aFont, 'T', 'C', 0, '');
                 $y += $h;
                 $i++;
                 //incrementa o controle dos itens processados.
@@ -2650,39 +2653,39 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
 
     /**
      * issqnDANFE
-     * Monta o campo de servi√ßos do DANFE
+     * Monta o campo de serviÁos do DANFE
      *
      * @name   issqnDANFE (retrato e paisagem)
-     * @param  float $x Posi√ß√£o horizontal canto esquerdo
-     * @param  float $y Posi√ß√£o vertical canto superior
-     * @return float Posi√ß√£o vertical final
+     * @param  float $x PosiÁ„o horizontal canto esquerdo
+     * @param  float $y PosiÁ„o vertical canto superior
+     * @return float PosiÁ„o vertical final
      */
     protected function pIssqnDANFE($x, $y)
     {
         $oldX = $x;
         //#####################################################################
-        //C√ÅLCULO DO ISSQN
-        $texto = "C√ÅLCULO DO ISSQN";
+        //C¡LCULO DO ISSQN
+        $texto = "C¡LCULO DO ISSQN";
         $w = $this->wPrint;
         $h = 7;
         $aFont = array('font'=>$this->fontePadrao, 'size'=>7, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 0, '');
-        //INSCRI√á√ÉO MUNICIPAL
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 0, '');
+        //INSCRI«√O MUNICIPAL
         $y += 3;
         $w = round($this->wPrint*0.23, 0);
-        $texto = 'INSCRI√á√ÉO MUNICIPAL';
+        $texto = 'INSCRI«√O MUNICIPAL';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
-        //inscri√ß√£o municipal
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
+        //inscriÁ„o municipal
         $texto = ! empty($this->emit->getElementsByTagName("IM")->item(0)->nodeValue) ?
                 $this->emit->getElementsByTagName("IM")->item(0)->nodeValue : '';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'L', 0, '');
-        //VALOR TOTAL DOS SERVI√áOS
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'L', 0, '');
+        //VALOR TOTAL DOS SERVI«OS
         $x += $w;
-        $texto = 'VALOR TOTAL DOS SERVI√áOS';
+        $texto = 'VALOR TOTAL DOS SERVI«OS';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         if (isset($this->ISSQNtot)) {
             $texto = ! empty($this->ISSQNtot->getElementsByTagName("vServ")->item(0)->nodeValue) ?
                     $this->ISSQNtot->getElementsByTagName("vServ")->item(0)->nodeValue : '';
@@ -2691,12 +2694,12 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $texto = '';
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'R', 0, '');
-        //BASE DE C√ÅLCULO DO ISSQN
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'R', 0, '');
+        //BASE DE C¡LCULO DO ISSQN
         $x += $w;
-        $texto = 'BASE DE C√ÅLCULO DO ISSQN';
+        $texto = 'BASE DE C¡LCULO DO ISSQN';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         if (isset($this->ISSQNtot)) {
             $texto = ! empty($this->ISSQNtot->getElementsByTagName("vBC")->item(0)->nodeValue) ?
                     $this->ISSQNtot->getElementsByTagName("vBC")->item(0)->nodeValue : '';
@@ -2705,7 +2708,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $texto = '';
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'R', 0, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'R', 0, '');
         //VALOR TOTAL DO ISSQN
         $x += $w;
         if ($this->orientacao == 'P') {
@@ -2715,7 +2718,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         }
         $texto = 'VALOR TOTAL DO ISSQN';
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
         if (isset($this->ISSQNtot)) {
             $texto = ! empty($this->ISSQNtot->getElementsByTagName("vISS")->item(0)->nodeValue) ?
                     $this->ISSQNtot->getElementsByTagName("vISS")->item(0)->nodeValue : '';
@@ -2724,7 +2727,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $texto = '';
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'B', 'R', 0, '');
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'B', 'R', 0, '');
         return ($y+$h+1);
     }
 
@@ -2733,10 +2736,10 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      * Coloca o grupo de dados adicionais da NFe. (retrato e paisagem)
      *
      * @name   dadosAdicionaisDANFE
-     * @param  float $x Posi√ß√£o horizontal canto esquerdo
-     * @param  float $y Posi√ß√£o vertical canto superior
+     * @param  float $x PosiÁ„o horizontal canto esquerdo
+     * @param  float $y PosiÁ„o vertical canto superior
      * @param  float $h altura do campo
-     * @return float Posi√ß√£o vertical final (eixo Y)
+     * @return float PosiÁ„o vertical final (eixo Y)
      */
     protected function pDadosAdicionaisDANFE($x, $y, $h)
     {
@@ -2750,13 +2753,13 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>7, 'style'=>'B');
         $this->pTextBox($x, $y, $w, 8, $texto, $aFont, 'T', 'L', 0, '');
-        //INFORMA√á√ïES COMPLEMENTARES
-        $texto = "INFORMA√á√ïES COMPLEMENTARES";
+        //INFORMA«’ES COMPLEMENTARES
+        $texto = "INFORMA«’ES COMPLEMENTARES";
         $y += 3;
         $w = $this->wAdic;
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
-        //o texto com os dados adicionais foi obtido na fun√ß√£o montaDANFE
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
+        //o texto com os dados adicionais foi obtido na funÁ„o montaDANFE
         //e carregado em uma propriedade privada da classe
         //$this->wAdic com a largura do campo
         //$this->textoAdic com o texto completo do campo
@@ -2773,38 +2776,38 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $w = $this->wPrint-$w-$this->wCanhoto;
         }
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'B');
-        $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'T', 'L', 1, '');
-        //inserir texto informando caso de conting√™ncia
-        // 1 - Normal - emiss√£o normal;
-        // 2 - Conting√™ncia FS - emiss√£o em conting√™ncia com impress√£o do DANFE em Formul√°rio de Seguran√ßa;
-        // 3 - Conting√™ncia SCAN - emiss√£o em conting√™ncia no Sistema de Conting√™ncia do Ambiente Nacional;
-        // 4 - Conting√™ncia DPEC - emiss√£o em conting√™ncia com envio da Declara√ß√£o
-        //     Pr√©via de Emiss√£o em Conting√™ncia;
-        // 5 - Conting√™ncia FS-DA - emiss√£o em conting√™ncia com impress√£o do DANFE em Formul√°rio de
-        //     Seguran√ßa para Impress√£o de Documento Auxiliar de Documento Fiscal Eletr√¥nico (FS-DA);
-        // 6 - Conting√™ncia SVC-AN
-        // 7 - Conting√™ncia SVC-RS
+        $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
+        //inserir texto informando caso de contingÍncia
+        // 1 - Normal - emiss„o normal;
+        // 2 - ContingÍncia FS - emiss„o em contingÍncia com impress„o do DANFE em Formul·rio de SeguranÁa;
+        // 3 - ContingÍncia SCAN - emiss„o em contingÍncia no Sistema de ContingÍncia do Ambiente Nacional;
+        // 4 - ContingÍncia DPEC - emiss„o em contingÍncia com envio da DeclaraÁ„o
+        //     PrÈvia de Emiss„o em ContingÍncia;
+        // 5 - ContingÍncia FS-DA - emiss„o em contingÍncia com impress„o do DANFE em Formul·rio de
+        //     SeguranÁa para Impress„o de Documento Auxiliar de Documento Fiscal EletrÙnico (FS-DA);
+        // 6 - ContingÍncia SVC-AN
+        // 7 - ContingÍncia SVC-RS
         $xJust = $this->pSimpleGetValue($this->ide, 'xJust', 'Justificativa: ');
-        $dhCont = $this->pSimpleGetValue($this->ide, 'dhCont', ' Entrada em conting√™ncia : ');
+        $dhCont = $this->pSimpleGetValue($this->ide, 'dhCont', ' Entrada em contingÍncia : ');
         $texto = '';
         switch ($this->tpEmis) {
             case 2:
-                $texto = 'CONTING√äNCIA FS' . $dhCont . $xJust;
+                $texto = 'CONTING NCIA FS' . $dhCont . $xJust;
                 break;
             case 3:
-                $texto = 'CONTING√äNCIA SCAN' . $dhCont . $xJust;
+                $texto = 'CONTING NCIA SCAN' . $dhCont . $xJust;
                 break;
             case 4:
-                $texto = 'CONTING√äNCIA DPEC' . $dhCont . $xJust;
+                $texto = 'CONTING NCIA DPEC' . $dhCont . $xJust;
                 break;
             case 5:
-                $texto = 'CONTING√äNCIA FSDA' . $dhCont . $xJust;
+                $texto = 'CONTING NCIA FSDA' . $dhCont . $xJust;
                 break;
             case 6:
-                $texto = 'CONTING√äNCIA SVC-AN' . $dhCont . $xJust;
+                $texto = 'CONTING NCIA SVC-AN' . $dhCont . $xJust;
                 break;
             case 7:
-                $texto = 'CONTING√äNCIA SVC-RS' . $dhCont . $xJust;
+                $texto = 'CONTING NCIA SVC-RS' . $dhCont . $xJust;
                 break;
         }
         $y += 2;
@@ -2815,12 +2818,12 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
 
     /**
      * pRodape
-     * Monta o rodap√© no final da DANFE com a data/hora de impress√£o e informa√ß√µes
+     * Monta o rodapÈ no final da DANFE com a data/hora de impress„o e informaÁıes
      * sobre a API NfePHP
      *
      * @name   pRodape
-     * @param  float $xInic  Posi√ß√£o horizontal canto esquerdo
-     * @param  float $yFinal Posi√ß√£o vertical final para impress√£o
+     * @param  float $xInic  PosiÁ„o horizontal canto esquerdo
+     * @param  float $yFinal PosiÁ„o vertical final para impress„o
      * @return void
      */
     protected function pRodape($x, $y)
@@ -2834,8 +2837,8 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'I');
         $texto = "Impresso em ". date('d/m/Y') . " as " . date('H:i:s');
         $this->pTextBox($x, $y, $w, 0, $texto, $aFont, 'T', 'L', false);
-        $texto = "DanfeNFePHP ver. " . $this->version .  "  Powered by NFePHP (GNU/GPLv3 GNU/LGPLv3) ¬© www.nfephp.org";
-        $this->pTextBox($x, $y, $w, 0, $texto, $aFont, 'T', 'R', false, 'http://www.nfephp.org');
+        //$texto = "DanfeNFePHP ver. " . $this->version .  "  Powered by NFePHP (GNU/GPLv3 GNU/LGPLv3) © www.nfephp.org";
+        //$this->pTextBox($x, $y, $w, 0, $texto, $aFont, 'T', 'R', false, 'http://www.nfephp.org');
     }
 
     /**
@@ -2843,11 +2846,11 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
      * Monta o canhoto da DANFE (retrato e paisagem)
      *
      * @name   canhotoDANFE
-     * @param  number $x Posi√ß√£o horizontal canto esquerdo
-     * @param  number $y Posi√ß√£o vertical canto superior
-     * @return number Posi√ß√£o vertical final
+     * @param  number $x PosiÁ„o horizontal canto esquerdo
+     * @param  number $y PosiÁ„o vertical canto superior
+     * @return number PosiÁ„o vertical final
      *
-     * TODO 21/07/14 fmertins: quando orienta√ß√£o L-paisagem, o canhoto est√° sendo gerado incorretamente
+     * TODO 21/07/14 fmertins: quando orientaÁ„o L-paisagem, o canhoto est· sendo gerado incorretamente
      */
     protected function pCanhoto($x, $y)
     {
@@ -2855,7 +2858,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $oldY = $y;
         //#################################################################################
         //canhoto
-        //identifica√ß√£o do tipo de nf entrada ou saida
+        //identificaÁ„o do tipo de nf entrada ou saida
         $tpNF = $this->ide->getElementsByTagName('tpNF')->item(0)->nodeValue;
         if ($tpNF == '0') {
             //NFe de Entrada
@@ -2869,7 +2872,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $emitente .= $this->enderDest->getElementsByTagName("UF")->item(0)->nodeValue . "";
             $destinatario = $this->emit->getElementsByTagName("xNome")->item(0)->nodeValue . " ";
         } else {
-            //NFe de Sa√≠da
+            //NFe de SaÌda
             $emitente = $this->emit->getElementsByTagName("xNome")->item(0)->nodeValue . " ";
             $destinatario = '';
             $destinatario .= $this->dest->getElementsByTagName("xNome")->item(0)->nodeValue . " - ";
@@ -2880,7 +2883,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $destinatario .= $this->enderDest->getElementsByTagName("xMun")->item(0)->nodeValue . "-";
             $destinatario .= $this->enderDest->getElementsByTagName("UF")->item(0)->nodeValue . " ";
         }
-        //identifica√ß√£o do sistema emissor
+        //identificaÁ„o do sistema emissor
         //linha separadora do canhoto
         if ($this->orientacao == 'P') {
             $w = round($this->wPrint * 0.81, 0);
@@ -2897,21 +2900,21 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $aFont = array('font'=>$this->fontePadrao, 'size'=>7, 'style'=>'');
         $aFontSmall = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
         if ($this->orientacao == 'P') {
-            $this->pTextBox($x, $y, $w, $h, $texto, $aFont, 'C', 'L', 1, '', false);
+            $this->pTextBox($x, $y, $w, $h, utf8_encode($texto), $aFont, 'C', 'L', 1, '', false);
         } else {
-            $this->pTextBox90($x, $y, $w, $h, $texto, $aFont, 'C', 'L', 1, '', false);
+            $this->pTextBox90($x, $y, $w, $h, utf8_encode($texto), $aFont, 'C', 'L', 1, '', false);
         }
         $numNF = str_pad($this->ide->getElementsByTagName('nNF')->item(0)->nodeValue, 9, "0", STR_PAD_LEFT);
         $serie = str_pad($this->ide->getElementsByTagName('serie')->item(0)->nodeValue, 3, "0", STR_PAD_LEFT);
         $texto = "RECEBEMOS DE ";
         $texto .= $emitente;
-        $texto .= " OS PRODUTOS E/OU SERVI√áOS CONSTANTES DA NOTA FISCAL ELETR√îNICA INDICADA ";
+        $texto .= " OS PRODUTOS E/OU SERVI«OS CONSTANTES DA NOTA FISCAL ELETR‘NICA INDICADA ";
         if ($this->orientacao == 'P') {
             $texto .= "ABAIXO";
         } else {
             $texto .= "AO LADO";
         }
-        $texto .= ". EMISS√ÉO: ";
+        $texto .= ". EMISS√O: ";
         $dEmi = ! empty($this->ide->getElementsByTagName("dEmi")->item(0)->nodeValue) ?
                 $this->ide->getElementsByTagName("dEmi")->item(0)->nodeValue : '';
         if ($dEmi == '') {
@@ -2923,30 +2926,30 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
         $texto .= $this->pYmd2dmy($dEmi) ." ";
         $texto .= "VALOR TOTAL: R$ ";
         $texto .= number_format($this->ICMSTot->getElementsByTagName("vNF")->item(0)->nodeValue, 2, ",", ".") . " ";
-        $texto .= "DESTINAT√ÅRIO: ";
+        $texto .= "DESTINAT¡RIO: ";
         $texto .= $destinatario;
         if ($this->orientacao == 'P') {
-            $this->pTextBox($x, $y, $w-1, $h, $texto, $aFont, 'C', 'L', 0, '', false);
+            $this->pTextBox($x, $y, $w-1, $h, utf8_encode($texto), $aFont, 'C', 'L', 0, '', false);
             $x1 = $x + $w;
             $w1 = $this->wPrint - $w;
             $texto = "NF-e";
             $aFont = array('font'=>$this->fontePadrao, 'size'=>14, 'style'=>'B');
             $this->pTextBox($x1, $y, $w1, 18, $texto, $aFont, 'T', 'C', 0, '');
-            $texto = "N¬∫. " . $this->pFormat($numNF, "###.###.###") . " \n";
-            $texto .= "S√©rie $serie";
+            $texto = "N∫. " . $this->pFormat($numNF, "###.###.###") . " \n";
+            $texto .= "SÈrie $serie";
             $aFont = array('font'=>$this->fontePadrao, 'size'=>10, 'style'=>'B');
-            $this->pTextBox($x1, $y, $w1, 18, $texto, $aFont, 'C', 'C', 1, '');
+            $this->pTextBox($x1, $y, $w1, 18, utf8_encode($texto), $aFont, 'C', 'C', 1, '');
             //DATA DE RECEBIMENTO
             $texto = "DATA DE RECEBIMENTO";
             $y += $h;
             $w2 = round($this->wPrint*0.17, 0); //35;
             $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
-            $this->pTextBox($x, $y, $w2, 8, $texto, $aFont, 'T', 'L', 1, '');
-            //IDENTIFICA√á√ÉO E ASSINATURA DO RECEBEDOR
+            $this->pTextBox($x, $y, $w2, 8, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
+            //IDENTIFICA«√O E ASSINATURA DO RECEBEDOR
             $x += $w2;
             $w3 = $w-$w2;
-            $texto = "IDENTIFICA√á√ÉO E ASSINATURA DO RECEBEDOR";
-            $this->pTextBox($x, $y, $w3, 8, $texto, $aFont, 'T', 'L', 1, '');
+            $texto = "IDENTIFICA«√O E ASSINATURA DO RECEBEDOR";
+            $this->pTextBox($x, $y, $w3, 8, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
             $x = $oldX;
             $y += 9;
             $this->pdf->DashedHLine($x, $y, $this->wPrint, 0.1, 80);
@@ -2954,7 +2957,7 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             return $y;
         } else {
             $x--;
-            $x = $this->pTextBox90($x, $y, $w-1, $h, $texto, $aFontSmall, 'C', 'L', 0, '', false);
+            $x = $this->pTextBox90($x, $y, $w-1, $h, utf8_encode($texto), $aFontSmall, 'C', 'L', 0, '', false);
             //NUMERO DA NOTA FISCAL LOGO NFE
             $w1 = 16;
             $x1 = $oldX;
@@ -2962,8 +2965,8 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $texto = "NF-e";
             $aFont = array('font'=>$this->fontePadrao, 'size'=>14, 'style'=>'B');
             $this->pTextBox($x1, $y, $w1, 18, $texto, $aFont, 'T', 'C', 0, '');
-            $texto = "N¬∫.\n" . $this->pFormat($numNF, "###.###.###") . " \n";
-            $texto .= "S√©rie $serie";
+            $texto = "N∫.\n" . $this->pFormat($numNF, "###.###.###") . " \n";
+            $texto .= "SÈrie $serie";
             $aFont = array('font'=>$this->fontePadrao, 'size'=>8, 'style'=>'B');
             $this->pTextBox($x1, $y, $w1, 18, $texto, $aFont, 'C', 'C', 1, '');
             //DATA DO RECEBIMENTO
@@ -2973,12 +2976,12 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
             $w2 = round($this->wPrint*0.17, 0); //35;
             $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
             $this->pTextBox90($x, $y, $w2, 8, $texto, $aFont, 'T', 'L', 1, '');
-            //IDENTIFICA√á√ÉO E ASSINATURA DO RECEBEDOR
+            //IDENTIFICA«√O E ASSINATURA DO RECEBEDOR
             $y -= $w2;
             $w3 = $w-$w2;
-            $texto = "IDENTIFICA√á√ÉO E ASSINATURA DO RECEBEDOR";
+            $texto = "IDENTIFICA«√O E ASSINATURA DO RECEBEDOR";
             $aFont = array('font'=>$this->fontePadrao, 'size'=>5.7, 'style'=>'');
-            $x = $this->pTextBox90($x, $y, $w3, 8, $texto, $aFont, 'T', 'L', 1, '');
+            $x = $this->pTextBox90($x, $y, $w3, 8, utf8_encode($texto), $aFont, 'T', 'L', 1, '');
             $this->pdf->DashedVLine(23, $oldY, 0.1, $this->wPrint-20, 67);
             return $x;
         }
@@ -2986,8 +2989,8 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
 
     /**
      * pGeraInformacoesDaTagCompra
-     * Devolve uma string contendo informa√ß√£o sobre as tag <compra><xNEmp>, <xPed> e <xCont> ou string vazia.
-     * Aviso: Esta fun√ß√£o n√£o leva em considera√ß√£o dados na tag xPed do item.
+     * Devolve uma string contendo informaÁ„o sobre as tag <compra><xNEmp>, <xPed> e <xCont> ou string vazia.
+     * Aviso: Esta funÁ„o n„o leva em consideraÁ„o dados na tag xPed do item.
      *
      * @name   pGeraInformacoesDaTagCompra
      * @return string com as informacoes dos pedidos.
@@ -3050,19 +3053,19 @@ class Danfe extends CommonNFePHP implements DocumentoNFePHP
 
     /**
      * pGeraInformacoesDasNotasReferenciadas
-     * Devolve uma string contendo informa√ß√£o sobre as notas referenciadas. Suporta N notas, eletr√¥nicas ou n√£o
-     * Exemplo: NFe Ref.: s√©rie: 01 n√∫mero: 01 emit: 11.111.111/0001-01
+     * Devolve uma string contendo informaÁ„o sobre as notas referenciadas. Suporta N notas, eletrÙnicas ou n„o
+     * Exemplo: NFe Ref.: sÈrie: 01 n˙mero: 01 emit: 11.111.111/0001-01
      * em 10/2010 [0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000]
      *
-     * @return string Informacoes a serem adicionadas no rodap√© sobre notas referenciadas.
+     * @return string Informacoes a serem adicionadas no rodapÈ sobre notas referenciadas.
      */
     protected function pGeraInformacoesDasNotasReferenciadas()
     {
-        $formaNfeRef = "\r\nNFe Ref.: s√©rie:%d n√∫mero:%d emit:%s em %s [%s]";
-        $formaCTeRef = "\r\nCTe Ref.: s√©rie:%d n√∫mero:%d emit:%s em %s [%s]";
-        $formaNfRef = "\r\nNF  Ref.: s√©rie:%d numero:%d emit:%s em %s modelo: %d";
+        $formaNfeRef = "\r\nNFe Ref.: sÈrie:%d n˙mero:%d emit:%s em %s [%s]";
+        $formaCTeRef = "\r\nCTe Ref.: sÈrie:%d n˙mero:%d emit:%s em %s [%s]";
+        $formaNfRef = "\r\nNF  Ref.: sÈrie:%d numero:%d emit:%s em %s modelo: %d";
         $formaECFRef = "\r\nECF Ref.: modelo: %s ECF:%d COO:%d";
-        $formaNfpRef = "\r\nNFP Ref.: s√©rie:%d n√∫mero:%d emit:%s em %s modelo: %d IE:%s";
+        $formaNfpRef = "\r\nNFP Ref.: sÈrie:%d n˙mero:%d emit:%s em %s modelo: %d IE:%s";
         $saida='';
         $nfRefs = $this->ide->getElementsByTagName('NFref');
         if (0 === $nfRefs->length) {

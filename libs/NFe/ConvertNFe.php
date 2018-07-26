@@ -534,7 +534,7 @@ class ConvertNFe
         $this->linhaE[3] = $aCampos[3];
         $this->linhaE[4] = $aCampos[4];
         $this->linhaE[5] = $aCampos[5];
-        $this->linhaE[6] = $aCampos[6];
+        $this->linhaE[6] = isset($aCampos[6]) ? $aCampos[6] : '';
         $this->linhaE[7] = '';
         $this->linhaE[8] = '';
         $this->linhaE[9] = '';
@@ -1983,7 +1983,7 @@ class ConvertNFe
      */
     protected function q05Entity($aCampos)
     {
-        //Q05|CST|vPIS|
+        //Q05|CST|
         $this->linhaQ[1] = $aCampos[1]; //cst
         $this->linhaQ[2] = ''; //vBC
         $this->linhaQ[3] = ''; //pPIS
@@ -2000,9 +2000,10 @@ class ConvertNFe
      */
     protected function q07Entity($aCampos)
     {
-        //Q07|vBC|pPIS|
+        //Q07|vBC|pPIS|vPIS|
         $this->linhaQ[2] = $aCampos[1]; //vBC
         $this->linhaQ[3] = $aCampos[2]; //pPIS
+        $this->linhaQ[4] = $aCampos[3]; //vPIS
         $this->zLinhaQEntity($this->linhaQ);
     }
     
@@ -2889,6 +2890,7 @@ class ConvertNFe
     /**
      * zArray2xml
      * Converte uma Nota Fiscal em um array de txt em um xml
+     *
      * @param  array $aDados
      * @return string
      * @throws Exception\RuntimeException
@@ -2896,8 +2898,7 @@ class ConvertNFe
     protected function zArray2xml($aDados = array())
     {
         foreach ($aDados as $dado) {
-            $aCampos = explode("|", $dado);
-            array_walk_recursive($aCampos, '\NFePHP\NFe\ConvertNFe::clearFieldString');
+            $aCampos = $this->zClean(explode("|", $dado));
             $metodo = strtolower(str_replace(' ', '', $aCampos[0])).'Entity';
             if (! method_exists($this, $metodo)) {
                 $msg = "O txt tem um metodo não definido!! $dado";
@@ -2906,19 +2907,22 @@ class ConvertNFe
             $this->$metodo($aCampos);
         }
     }
-
+    
     /**
-     * Clear the string of unwanted characters
-     * Will remove all duplicated spaces and if wanted
-     * replace all accented characters by their originals
-     * and all the special ones
-     * @param string $field string to be cleaned
+     * zClean
+     * Efetua limpeza dos campos
+     *
+     * @param  array $aCampos
+     * @return array
      */
-    private function clearFieldString(&$field)
+    protected function zClean($aCampos = array())
     {
-        $field = trim(preg_replace('/\s+/', ' ', $field));
-        if ($this->limparString) {
-            $field = Strings::cleanString($field);
+        foreach ($aCampos as $campo) {
+            $campo = trim(preg_replace('/\s+/', ' ', $campo));
+            if ($this->limparString) {
+                $campo = Strings::cleanString($campo);
+            }
         }
+        return $aCampos;
     }
 }

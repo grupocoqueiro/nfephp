@@ -3,7 +3,7 @@
 namespace NFePHP\Common\Base;
 
 /**
- * Classe base das classes principais para a comunicaÃ§Ã£o com a SEFAZ
+ * Classe base das classes principais para a comunicação com a SEFAZ
  *
  * @category  NFePHP
  * @package   NFePHP\Common\Base
@@ -28,21 +28,21 @@ class BaseTools
 {
     /**
      * enableSVCRS
-     * Habilita contingÃªncia ao serviÃ§o SVC-RS: Sefaz Virtual de ContingÃªncia Rio Grande do Sul
+     * Habilita contingência ao serviço SVC-RS: Sefaz Virtual de Contingência Rio Grande do Sul
      *
      * @var boolean
      */
     public $enableSVCRS = false;
     /**
      * enableSVCAN
-     * Habilita contingÃªncia ao serviÃ§o SVC-AN: Sefaz Virtual de ContingÃªncia Ambiente Nacional
+     * Habilita contingência ao serviço SVC-AN: Sefaz Virtual de Contingência Ambiente Nacional
      *
      * @var boolean
      */
     public $enableSVCAN = false;
     /**
      * enableSVCAN
-     * Habilita contingÃªncia ao serviÃ§o SVC-AN: Sefaz Virtual de ContingÃªncia Ambiente Nacional
+     * Habilita contingência ao serviço SVC-AN: Sefaz Virtual de Contingência Ambiente Nacional
      *
      * @var boolean
      */
@@ -56,14 +56,14 @@ class BaseTools
     public $motivoContingencia = '';
     /**
      * tsContingencia
-     * Timestamp UNIX da data e hora de entrada em contingÃªncia
+     * Timestamp UNIX da data e hora de entrada em contingência
      *
      * @var int
      */
     public $tsContingencia = '';
     /**
      * verAplic
-     * VersÃ£o da aplicaÃ§Ã£o
+     * Versão da aplicação
      *
      * @var string
      */
@@ -109,7 +109,7 @@ class BaseTools
     /**
      * oSoap
      *
-     * @var Object Class
+     * @var CurlSoap Class
      */
     protected $oSoap;
     /**
@@ -132,7 +132,7 @@ class BaseTools
     protected $aMailConf = array();
     /**
      * urlPortal
-     * InstÃ¢ncia do WebService
+     * Instância do WebService
      *
      * @var string
      */
@@ -233,13 +233,13 @@ class BaseTools
     public function __construct($configJson = '')
     {
         if ($configJson == '') {
-            $msg = 'O arquivo de configuraÃ§Ã£o no formato JSON deve ser passado para a classe.';
+            $msg = 'O arquivo de configuração no formato JSON deve ser passado para a classe.';
             throw new Exception\InvalidArgumentException($msg);
         }
         if (is_file($configJson)) {
             $configJson = Files\FilesFolders::readFile($configJson);
         }
-        //carrega os dados de configuraÃ§Ã£o
+        //carrega os dados de configuração
         $this->aConfig    = (array) json_decode($configJson);
         $this->aDocFormat = (array) $this->aConfig['aDocFormat'];
         $this->aProxyConf = (array) $this->aConfig['aProxyConf'];
@@ -249,8 +249,12 @@ class BaseTools
         //carrega os certificados
         $this->oCertificate = new Pkcs12(
             $this->aConfig['pathCertsFiles'],
-            $this->aConfig['cnpj']
+            $this->aConfig['cnpj'],
+            $this->aConfig['pubKey'],
+            $this->aConfig['priKey'],
+            $this->aConfig['certKey']
         );
+        
         if ($this->oCertificate->priKey == '') {
             //tentar carregar novo certificado
             $this->atualizaCertificado(
@@ -258,14 +262,18 @@ class BaseTools
                 $this->aConfig['certPassword']
             );
             if ($this->oCertificate->expireTimestamp == 0) {
-                $msg = 'NÃ£o existe certificado vÃ¡lido disponÃ­vel. Atualize o Certificado.';
+                $msg = 'Não existe certificado válido disponível. Atualize o Certificado.';
                 throw new Exception\RuntimeException($msg);
             }
         }
         $this->setAmbiente($this->aConfig['tpAmb']);
         $this->certExpireTimestamp = $this->oCertificate->expireTimestamp;
         $this->zLoadSoapClass();
-        //verifica se a contingÃªncia estÃ¡ ativada
+        
+        // configuracao de proxy
+        $this->zProxySoapClass();
+        
+        //verifica se a contingência está ativada
         $pathContingencia = NFEPHP_ROOT.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.$this->aConfig['cnpj'].'_contingencia.json';
         if (is_file($pathContingencia)) {
             $contJson = Files\FilesFolders::readFile($pathContingencia);
@@ -281,9 +289,9 @@ class BaseTools
     
     /**
      * setSSLProtocol
-     * ForÃ§a o uso de um determinado protocolo de encriptaÃ§Ã£o
-     * na comunicaÃ§Ã£o https com a SEFAZ usando cURL
-     * Apenas Ã© necessÃ¡rio quando a versÃ£o do PHP e do libssl nÃ£o
+     * Força o uso de um determinado protocolo de encriptação
+     * na comunicação https com a SEFAZ usando cURL
+     * Apenas é necessário quando a versão do PHP e do libssl não
      * consegue estabelecer o protocolo correto durante o handshake
      *
      * @param string $protocol
@@ -319,7 +327,7 @@ class BaseTools
     
     /**
      * getSSLProtocol
-     * Retrona o protocolo que estÃ¡ setado
+     * Retrona o protocolo que está setado
      *
      * @return string
      */
@@ -354,7 +362,7 @@ class BaseTools
     
     /**
      * setAmbiente
-     * Seta a varÃ¡vel de ambiente
+     * Seta a varável de ambiente
      *
      * @param string $tpAmb
      */
@@ -412,7 +420,7 @@ class BaseTools
         $dom->loadXMLString($sxml);
         //$versao = $dom->getElementsByTagName($tag)->item(0)->getAttribute('versao');
         //if (! $this->zValidMessage($sxml, $tipo, $versao)) {
-        //$msg = "Falha na validaÃ§Ã£o do $tipo. ".$this->error;
+        //$msg = "Falha na validação do $tipo. ".$this->error;
         //  throw new Exception\RuntimeException($msg);
         //}
         if ($saveFile && $tipo != '') {
@@ -445,26 +453,41 @@ class BaseTools
      */
     protected function zLoadSoapClass()
     {
+        
         $this->oSoap = null;
         $this->oSoap = new CurlSoap(
             $this->oCertificate->priKeyFile,
             $this->oCertificate->pubKeyFile,
             $this->oCertificate->certKeyFile,
             $this->soapTimeout,
-            $this->sslProtocol
+            $this->sslProtocol,
+            false,
+            $this->oCertificate
         );
     }
     
     /**
+     * Carrega as configurações de proxy
+     */
+    protected function zProxySoapClass()
+    {
+        if(!($this->oSoap instanceof CurlSoap)){
+            $this->zLoadSoapClass();
+        }
+        
+        $this->oSoap->setProxy($this->aConfig['aProxyConf']->proxyIp, $this->aConfig['aProxyConf']->proxyPort);
+    }
+    
+    /**
      * zLoadServico
-     * Monta o namespace e o cabecalho da comunicaÃ§Ã£o SOAP
+     * Monta o namespace e o cabecalho da comunicação SOAP
      *
      * @param    string $service
      * @param    string $siglaUF
      * @param    string $tpAmb
      * @param    string $tipo
      * @return   bool
-     * @internal param string $servico IdentificaÃ§Ã£o do Servico
+     * @internal param string $servico Identificação do Servico
      * @internal param array $aURL Dados das Urls do SEFAZ
      */
     protected function zLoadServico(
@@ -493,16 +516,16 @@ class BaseTools
             $aURL = self::zLoadSEFAZ($pathXmlUrlFile, $tpAmb, $siglaUF, $tipo);
         }
         
-        //recuperaÃ§Ã£o da versÃ£o
+        //recuperação da versão
         $this->urlVersion = $aURL[$service]['version'];
-        //recuperaÃ§Ã£o da url do serviÃ§o
+        //recuperação da url do serviço
         $this->urlService = $aURL[$service]['URL'];
-        //recuperaÃ§Ã£o do mÃ©todo
+        //recuperação do método
         $this->urlMethod = $aURL[$service]['method'];
-        //montagem do namespace do serviÃ§o
+        //montagem do namespace do serviço
         $this->urlOperation = $aURL[$service]['operation'];
         $this->urlNamespace = sprintf("%s/wsdl/%s", $this->urlPortal, $this->urlOperation);
-        //montagem do cabeÃ§alho da comunicaÃ§Ã£o SOAP
+        //montagem do cabeçalho da comunicação SOAP
         $this->urlHeader = $this->zMountHeader($tipo, $this->urlNamespace, $this->urlcUF, $this->urlVersion);
         return true;
     }
@@ -576,17 +599,17 @@ class BaseTools
     
     /**
      * zLoadSEFAZ
-     * Extrai o URL, nome do serviÃ§o e versÃ£o dos webservices das SEFAZ de
-     * todos os Estados da FederaÃ§Ã£o, a partir do arquivo XML de configuraÃ§Ãµes,
-     * onde este Ã© estruturado para os modelos 55 (NF-e) e 65 (NFC-e) jÃ¡ que
-     * os endereÃ§os dos webservices podem ser diferentes.
+     * Extrai o URL, nome do serviço e versão dos webservices das SEFAZ de
+     * todos os Estados da Federação, a partir do arquivo XML de configurações,
+     * onde este é estruturado para os modelos 55 (NF-e) e 65 (NFC-e) já que
+     * os endereços dos webservices podem ser diferentes.
      *
      * @param    string $pathXmlUrlFile
      * @param    string $tpAmb          Pode ser "2-homologacao" ou "1-producao"
      * @param    string $siglaUF
      * @param    strign $tipo           nfe, mdfe ou cte
      * @return   mixed false se houve erro ou array com os dados dos URLs da SEFAZ
-     * @internal param string $sUF Sigla da Unidade da FederaÃ§Ã£o (ex. SP, RS, SVRS, etc..)
+     * @internal param string $sUF Sigla da Unidade da Federação (ex. SP, RS, SVRS, etc..)
      * @see      /config/nfe_ws3_modXX.xml
      */
     protected function zLoadSEFAZ($pathXmlUrlFile = '', $tpAmb = '2', $siglaUF = 'SP', $tipo = 'nfe')
@@ -594,13 +617,13 @@ class BaseTools
         //verifica se o arquivo xml pode ser encontrado no caminho indicado
         if (! file_exists($pathXmlUrlFile)) {
             throw new Exception\RuntimeException(
-                "Arquivo $pathXmlUrlFile nÃ£o encontrado."
+                "Arquivo $pathXmlUrlFile não encontrado."
             );
         }
         //carrega o xml
         if (!$xmlWS = simplexml_load_file($pathXmlUrlFile)) {
             throw new Exception\RuntimeException(
-                "Arquivo $pathXmlUrlFile parece ser invalido ou estÃ¡ corrompido."
+                "Arquivo $pathXmlUrlFile parece ser invalido ou está corrompido."
             );
         }
         $autorizadores = array();
@@ -672,7 +695,7 @@ class BaseTools
             'SVCAN'=>'SVCAN',
             'SVCRS'=>'SVCRS'
         );
-        //variÃ¡vel de retorno do mÃ©todo
+        //variável de retorno do método
         $aUrl = array();
         //testa parametro tpAmb
         $sAmbiente = 'homologacao';
@@ -683,10 +706,10 @@ class BaseTools
         if ($tipo == 'mdfe') {
             $alias = 'RS';
         }
-        //estabelece a expressÃ£o xpath de busca
+        //estabelece a expressão xpath de busca
         $xpathExpression = "/WS/UF[sigla='$alias']/$sAmbiente";
         $aUrl = $this->zExtractUrl($xmlWS, $aUrl, $xpathExpression);
-        //verifica se existem outros serviÃ§os exclusivos para esse estado
+        //verifica se existem outros serviços exclusivos para esse estado
         if ($alias == 'SVAN' || $alias == 'SVRS') {
             $xpathExpression = "/WS/UF[sigla='$siglaUF']/$sAmbiente";
             $aUrl = $this->zExtractUrl($xmlWS, $aUrl, $xpathExpression);
@@ -704,14 +727,14 @@ class BaseTools
      */
     protected function zExtractUrl($xmlWS, $aUrl = array(), $expression = '')
     {
-        //para cada "nÃ³" no xml que atenda aos critÃ©rios estabelecidos
+        //para cada "nó" no xml que atenda aos critérios estabelecidos
         foreach ($xmlWS->xpath($expression) as $gUF) {
-            //para cada "nÃ³ filho" retonado
+            //para cada "nó filho" retonado
             foreach ($gUF->children() as $child) {
                 $u = (string) $child[0];
                 $aUrl[$child->getName()]['URL'] = $u;
-                // em cada um desses nÃ³s pode haver atributos como a identificaÃ§Ã£o
-                // do nome do webservice e a sua versÃ£o
+                // em cada um desses nós pode haver atributos como a identificação
+                // do nome do webservice e a sua versão
                 foreach ($child->attributes() as $a => $b) {
                     $aUrl[$child->getName()][$a] = (string) $b;
                 }
@@ -739,6 +762,8 @@ class BaseTools
         $subFolder = 'temporarias',
         $anomes = ''
     ) {
+    	
+    	return true;
         if ($anomes == '') {
             $anomes = date('Ym');
         }
@@ -753,7 +778,7 @@ class BaseTools
         $pathTemp = Files\FilesFolders::getFilePath($tpAmb, $path, $subFolder)
             . DIRECTORY_SEPARATOR.$anomes;
         if (! Files\FilesFolders::saveFile($pathTemp, $filename, $data)) {
-            $msg = 'Falha na gravaÃ§Ã£o no diretÃ³rio. '.$pathTemp;
+            $msg = 'Falha na gravação no diretório. '.$pathTemp;
             throw new Exception\RuntimeException($msg);
         }
     }

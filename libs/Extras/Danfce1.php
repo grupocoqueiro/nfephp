@@ -3,7 +3,7 @@
 namespace NFePHP\Extras;
 
 /**
- * Classe para a impressão em PDF do Docuimento Auxiliar de NFe Consumidor
+ * Classe para a impressÃ£o em PDF do Docuimento Auxiliar de NFe Consumidor
  *
  * @category  NFePHP
  * @package   NFePHP\NFe\ConvertNFe
@@ -28,7 +28,7 @@ use Endroid\QrCode\QrCode;
 
 /**
  * Classe Danfce1
- * Objetivo - impressão de NFC-e em uma unica pagina (bobina)
+ * Objetivo - impressÃ£o de NFC-e em uma unica pagina (bobina)
  */
 class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
 {
@@ -157,7 +157,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
         $hLinha = $this->hLinha;
         $tamPapelVert = 160 + (($qtdItens-1)*$hMaxLinha) + ($qtdPgto*$hLinha);
         
-        //se a orientação estiver em branco utilizar o padrão estabelecido na NF
+        //se a orientaÃ§Ã£o estiver em branco utilizar o padrÃ£o estabelecido na NF
         if ($orientacao == '') {
             $orientacao = 'P';
         }
@@ -173,13 +173,13 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
             $this->pdf = new PdfNFePHP($this->orientacao, 'mm', $this->papel);
         }
 
-        //margens do PDF, em milímetros. Obs.: a margem direita é sempre igual à
-        //margem esquerda. A margem inferior *não* existe na FPDF, é definida aqui
-        //apenas para controle se necessário ser maior do que a margem superior
+        //margens do PDF, em milÃ­metros. Obs.: a margem direita Ã© sempre igual Ã 
+        //margem esquerda. A margem inferior *nÃ£o* existe na FPDF, Ã© definida aqui
+        //apenas para controle se necessÃ¡rio ser maior do que a margem superior
         $margSup = 2;
         $margEsq = 2;
         $margInf = 2;
-        // posição inicial do conteúdo, a partir do canto superior esquerdo da página
+        // posiÃ§Ã£o inicial do conteÃºdo, a partir do canto superior esquerdo da pÃ¡gina
         $xInic = $margEsq;
         $yInic = $margSup;
         $maxW = 80;
@@ -197,14 +197,14 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
         $this->pdf->SetDrawColor(0, 0, 0);
         $this->pdf->SetFillColor(255, 255, 255);
         $this->pdf->Open(); // inicia o documento
-        $this->pdf->AddPage($this->orientacao, $this->papel); // adiciona a primeira página
+        $this->pdf->AddPage($this->orientacao, $this->papel); // adiciona a primeira pÃ¡gina
         $this->pdf->SetLineWidth(0.1); // define a largura da linha
         $this->pdf->SetTextColor(0, 0, 0);
 
         $this->pTextBox(0, 0, $maxW, $maxH); // POR QUE PRECISO DESA LINHA?
 
-        $hcabecalho = 27;//para cabeçalho (dados emitente mais logomarca)  (FIXO)
-        $hcabecalhoSecundario = 10;//para cabeçalho secundário (cabeçalho sefaz) (FIXO)
+        $hcabecalho = 27;//para cabeÃ§alho (dados emitente mais logomarca)  (FIXO)
+        $hcabecalhoSecundario = 10;//para cabeÃ§alho secundÃ¡rio (cabeÃ§alho sefaz) (FIXO)
         $hprodutos = $hLinha + ($qtdItens*$hMaxLinha) ;//box poduto
         $hTotal = 12; //box total (FIXO)
         $hpagamentos = $hLinha + ($qtdPgto*$hLinha);//para pagamentos
@@ -215,7 +215,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
             $hcliente = 12;
         }// para cliente (FIXO)};
         $hQRCode = 50;// para qrcode (FIXO)
-        $hCabecItens = 4;//cabeçalho dos itens
+        $hCabecItens = 4;//cabeÃ§alho dos itens
         
         $hUsado = $hCabecItens;
         $w2 = round($this->wPrint*0.31, 0);
@@ -223,26 +223,26 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
         $pag = 1;
         $x = $xInic;
         
-        //COLOCA CABEÇALHO
+        //COLOCA CABEÃ‡ALHO
         $y = $yInic;
         $y = $this->pCabecalhoDANFE($x, $y, $hcabecalho, $pag, $totPag);
-        
-        //COLOCA CABEÇALHO SECUNDÁRIO
+       
+        //COLOCA CABEÃ‡ALHO SECUNDÃ�RIO
         $y = $hcabecalho;
         $y = $this->pCabecalhoSecundarioDANFE($x, $y, $hcabecalhoSecundario);
         
         //COLOCA PRODUTOS
         $y = $xInic + $hcabecalho + $hcabecalhoSecundario;
         $y = $this->pProdutosDANFE($x, $y, $hprodutos);
-        
+       
         //COLOCA TOTAL
         $y = $xInic + $hcabecalho + $hcabecalhoSecundario + $hprodutos;
         $y = $this->pTotalDANFE($x, $y, $hTotal);
-        
+              
         //COLOCA PAGAMENTOS
         $y = $xInic + $hcabecalho + $hcabecalhoSecundario + $hprodutos + $hTotal;
         $y = $this->pPagamentosDANFE($x, $y, $hpagamentos);
-        
+       
         //COLOCA MENSAGEM FISCAL
         $y = $xInic + $hcabecalho + $hcabecalhoSecundario + $hprodutos + $hTotal+ $hpagamentos;
         $y = $this->pFiscalDANFE($x, $y, $hmsgfiscal);
@@ -255,7 +255,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
         $y = $xInic + $hcabecalho + $hcabecalhoSecundario + $hprodutos
             + $hTotal + $hpagamentos + $hmsgfiscal + $hcliente;
         $y = $this->pQRDANFE($x, $y, $hQRCode);
-
+       
         //retorna o ID na NFe
         if ($classPdf!==false) {
             $aR = array(
@@ -265,7 +265,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
         } else {
             return str_replace('NFe', '', $this->infNFe->getAttribute("Id"));
         }
-    }//fim da função montaDANFE
+    }//fim da funÃ§Ã£o montaDANFE
     
     protected function pCabecalhoDANFE($x = 0, $y = 0, $h = 0, $pag = '1', $totPag = '1')
     {
@@ -296,7 +296,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
         $emitMun = $this->pSimpleGetValue($this->enderEmit, "xMun");
         $emitUF = $this->pSimpleGetValue($this->enderEmit, "UF");
         
-        // CONFIGURAÇÃO DE POSIÇÃO
+        // CONFIGURAÃ‡ÃƒO DE POSIÃ‡ÃƒO
         $margemInterna = $this->margemInterna;
         $maxW = $this->wPrint;
         $h = $h-($margemInterna);
@@ -314,7 +314,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
             $wRs = ($maxW*1);
             $alignEmit = 'C';
         }
-        //COLOCA RAZÃO SOCIAL
+        //COLOCA RAZÃƒO SOCIAL
         $texto = $emitRazao;
         $texto = $texto . "\nCNPJ:" . $emitCnpj;
         $texto = $texto . "\nIE:" . $emitIE;
@@ -330,19 +330,19 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
     protected function pCabecalhoSecundarioDANFE($x = 0, $y = 0, $h = 0)
     {
 
-        // CONFIGURAÇÃO DE POSIÇÃO
+        // CONFIGURAÃ‡ÃƒO DE POSIÃ‡ÃƒO
         $margemInterna = $this->margemInterna;
         $maxW = $this->wPrint;
         $w = ($maxW*1);
         //COLOCA MENSAGEM 1
         $hBox1 = 7;
-        $texto = "DANFE NFC-e\nDocumento Auxiliar da Nota Fiscal de Consumidor Eletrônica";
+        $texto = "DANFE NFC-e\nDocumento Auxiliar da Nota Fiscal de Consumidor EletrÃ´nica";
         $aFont = array('font'=>$this->fontePadrao, 'size'=>8, 'style'=>'B');
         $this->pTextBox($x, $y, $w, $hBox1, $texto, $aFont, 'C', 'C', 0, '', false);
         //COLOCA MENSAGEM 2
         $hBox2 = 4;
         $yBox2 = $y + $hBox1;
-        $texto = "\nNFC-e não permite aproveitamento de crédito de ICMS";
+        $texto = "\nNFC-e nÃ£o permite aproveitamento de crÃ©dito de ICMS";
         $aFont = array('font'=>$this->fontePadrao, 'size'=>7, 'style'=>'');
         $this->pTextBox($x, $yBox2, $w, $hBox2, $texto, $aFont, 'C', 'C', 0, '', false);
         
@@ -351,25 +351,25 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
     protected function pProdutosDANFE($x = 0, $y = 0, $h = 0)
     {
 
-        // CONFIGURAÇÃO DE POSIÇÃO
+        // CONFIGURAÃ‡ÃƒO DE POSIÃ‡ÃƒO
         $margemInterna = $this->margemInterna;
         $maxW = $this->wPrint;
         $qtdItens = $this->det->length;
         $w = ($maxW*1);
         
-        //COLOCA CABEÇALHO PRODUTOS
+        //COLOCA CABEÃ‡ALHO PRODUTOS
         $hLinha = $this->hLinha;
         $aFontCabProdutos = array('font'=>$this->fontePadrao, 'size'=>7, 'style'=>'B');
         
-        //COLOCA CÓDIGO
+        //COLOCA CÃ“DIGO
         $wBoxCod = $w*0.17;
-        $texto = "CÓDIGO";
+        $texto = "CÃ“DIGO";
         $this->pTextBox($x, $y, $wBoxCod, $hLinha, $texto, $aFontCabProdutos, 'T', 'L', 0, '', false);
         
-        //COLOCA DESCRIÇÃO
+        //COLOCA DESCRIÃ‡ÃƒO
         $wBoxDescricao = $w*0.43;
         $xBoxDescricao = $wBoxCod + $x;
-        $texto = "DESCRICÃO";
+        $texto = "DESCRICÃƒO";
         $this->pTextBox(
             $xBoxDescricao,
             $y,
@@ -396,7 +396,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
         $texto = "UN";
         $this->pTextBox($xBoxUn, $y, $wBoxUn, $hLinha, $texto, $aFontCabProdutos, 'T', 'L', 0, '', false);
         
-        //COLOCA VL UNITÁRIO
+        //COLOCA VL UNITÃ�RIO
         $wBoxVl = $w*0.13;
         $xBoxVl = $wBoxUn + $xBoxUn;
         $texto = "VALOR";
@@ -429,12 +429,12 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
                 //COLOCA PRODUTO
                 $yBoxProd = $y + $hLinha + ($cont*$hMaxLinha);
 
-                //COLOCA PRODUTO CÓDIGO
+                //COLOCA PRODUTO CÃ“DIGO
                 $wBoxCod = $w*0.17;
                 $texto = $cProd;
                 $this->pTextBox($x, $yBoxProd, $wBoxCod, $hMaxLinha, $texto, $aFontProdutos, 'C', 'C', 0, '', false);
 
-                //COLOCA PRODUTO DESCRIÇÃO
+                //COLOCA PRODUTO DESCRIÃ‡ÃƒO
                 $wBoxDescricao = $w*0.43;
                 $xBoxDescricao = $wBoxCod + $x;
                 $texto = $xProd;
@@ -488,7 +488,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
                     false
                 );
 
-                //COLOCA PRODUTO VL UNITÁRIO
+                //COLOCA PRODUTO VL UNITÃ�RIO
                 $wBoxVl = $w*0.13;
                 $xBoxVl = $wBoxUn + $xBoxUn;
                 $texto = $vUnCom;
@@ -532,7 +532,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
     protected function pTotalDANFE($x = 0, $y = 0, $h = 0)
     {
 
-        // CONFIGURAÇÃO DE POSIÇÃO
+        // CONFIGURAÃ‡ÃƒO DE POSIÃ‡ÃƒO
         $margemInterna = $this->margemInterna;
         $maxW = $this->wPrint;
         $hLinha = 3;
@@ -587,7 +587,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
         //COLOCA TOTAL TRIBUTOS
         /*
         $yTotalFinal = $y + ($hLinha*4);
-        $texto = "Informação dos Tributos Totais Incidentes";
+        $texto = "InformaÃ§Ã£o dos Tributos Totais Incidentes";
         $aFont = array('font'=>$this->fontePadrao, 'size'=>7, 'style'=>'');
         $this->pTextBox($x, $yTotalFinal, $wColEsq, $hLinha, $texto, $aFont, 'T', 'L', 0, '', false);
         $texto = "R$ " . $vTotTrib;
@@ -600,7 +600,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
     protected function pPagamentosDANFE($x = 0, $y = 0, $h = 0)
     {
 
-        // CONFIGURAÇÃO DE POSIÇÃO
+        // CONFIGURAÃ‡ÃƒO DE POSIÃ‡ÃƒO
         $margemInterna = $this->margemInterna;
         $maxW = $this->wPrint;
         $qtdPgto = $this->pag->length;
@@ -644,11 +644,11 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
                 //COLOCA PRODUTO
                 $yBoxProd = $y + $hLinha + ($cont*$hLinha);
 
-                //COLOCA PRODUTO CÓDIGO
+                //COLOCA PRODUTO CÃ“DIGO
                 $texto = $tPagNome;
                 $this->pTextBox($x, $yBoxProd, $wBoxEsq, $hLinha, $texto, $aFont, 'T', 'L', 0, '', false);
 
-                //COLOCA PRODUTO DESCRIÇÃO
+                //COLOCA PRODUTO DESCRIÃ‡ÃƒO
                 $xBoxDescricao = $wBoxEsq + $x;
                 $texto = "R$ " . $vPag;
                 $this->pTextBox(
@@ -673,7 +673,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
     protected function pFiscalDANFE($x = 0, $y = 0, $h = 0)
     {
 
-        // CONFIGURAÇÃO DE POSIÇÃO
+        // CONFIGURAÃ‡ÃƒO DE POSIÃ‡ÃƒO
         $margemInterna = $this->margemInterna;
         $maxW = $this->wPrint;
         $w = ($maxW*1);
@@ -692,12 +692,12 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
         $urlChave = $this->urlConsulta[$tpAmb][$cUF]['chave'];
         
         //COLOCA TITULO
-        $texto = "ÁREA DE MENSAGEM FISCAL";
+        $texto = "Ã�REA DE MENSAGEM FISCAL";
         $this->pTextBox($x, $y, $w, $hLinha, $texto, $aFontTit, 'C', 'C', 0, '', false);
         //COLOCA TEXTO 1
         $yTex1 = $y + ($hLinha*1);
         $hTex1 = $hLinha*2;
-        $texto = "Número " . $nNF . " Série " . $serieNF . " " .$dhEmi . " - Via Consumidor";
+        $texto = "NÃºmero " . $nNF . " SÃ©rie " . $serieNF . " " .$dhEmi . " - Via Consumidor";
         $this->pTextBox($x, $yTex1, $w, $hTex1, $texto, $aFontTex, 'C', 'C', 0, '', false);
         //COLOCA TEXTO 2
         $yTex2 = $y + ($hLinha*3);
@@ -718,7 +718,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
     protected function pConsumidorDANFE($x = 0, $y = 0, $h = 0)
     {
 
-        // CONFIGURAÇÃO DE POSIÇÃO
+        // CONFIGURAÃ‡ÃƒO DE POSIÃ‡ÃƒO
         $margemInterna = $this->margemInterna;
         $maxW = $this->wPrint;
         $w = ($maxW*1);
@@ -765,7 +765,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
         } else {
             //COLOCA TITULO
             $yTex1 = $y + $hLinha;
-            $texto = "Consumidor não identificado";
+            $texto = "Consumidor nÃ£o identificado";
             $this->pTextBox($x, $yTex1, $w, $hLinha, $texto, $aFontTex, 'C', 'C', 0, '', false);
         }
         
@@ -773,7 +773,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
     
     protected function pQRDANFE($x = 0, $y = 0, $h = 0)
     {
-        // CONFIGURAÇÃO DE POSIÇÃO
+        // CONFIGURAÃ‡ÃƒO DE POSIÃ‡ÃƒO
         $margemInterna = $this->margemInterna;
         $maxW = $this->wPrint;
         $w = ($maxW*1);
@@ -783,6 +783,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
         $aFontTex = array('font'=>$this->fontePadrao, 'size'=>8, 'style'=>'');
         $dhRecbto = '';
         $nProt = '';
+
         if (isset($this->nfeProc)) {
             $nProt = $this->pSimpleGetValue($this->nfeProc, "nProt");
             $dhRecbto  = $this->pSimpleGetValue($this->nfeProc, "dhRecbto");
@@ -794,36 +795,36 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
         $xQr = ($w/2) - ($wQr/2);
         $qrcode->displayFPDF($this->pdf, $xQr, $yQr, $wQr);
         $yQr = ($yQr+$hQr+$margemInterna);
-        $this->pTextBox($x, $yQr, $w, $hBoxLinha, "Protocolo de Autorização: " . $nProt . "\n"
+        $this->pTextBox($x, $yQr, $w, $hBoxLinha, "Protocolo de AutorizaÃ§Ã£o: " . $nProt . "\n"
                 . $dhRecbto, $aFontTex, 'C', 'C', 0, '', false);
     }
    
     /**
      * printDANFE
-     * Esta função envia a DANFE em PDF criada para o dispositivo informado.
-     * O destino da impressão pode ser :
+     * Esta funÃ§Ã£o envia a DANFE em PDF criada para o dispositivo informado.
+     * O destino da impressÃ£o pode ser :
      * I-browser
      * D-browser com download
      * F-salva em um arquivo local com o nome informado
-     * S-retorna o documento como uma string e o nome é ignorado.
+     * S-retorna o documento como uma string e o nome Ã© ignorado.
      * Para enviar o pdf diretamente para uma impressora indique o
      * nome da impressora e o destino deve ser 'S'.
      *
      * @param  string $nome    Path completo com o nome do arquivo pdf
-     * @param  string $destino Direção do envio do PDF
-     * @param  string $printer Identificação da impressora no sistema
-     * @return string Caso o destino seja S o pdf é retornado como uma string
-     * @todo   Rotina de impressão direta do arquivo pdf criado
+     * @param  string $destino DireÃ§Ã£o do envio do PDF
+     * @param  string $printer IdentificaÃ§Ã£o da impressora no sistema
+     * @return string Caso o destino seja S o pdf Ã© retornado como uma string
+     * @todo   Rotina de impressÃ£o direta do arquivo pdf criado
      */
     public function printDANFE($nome = '', $destino = 'I', $printer = '')
     {
         $arq = $this->pdf->Output($nome, $destino);
         if ($destino == 'S') {
-            //aqui pode entrar a rotina de impressão direta
+            //aqui pode entrar a rotina de impressÃ£o direta
         }
         return $arq;
 
-    } //fim função printDANFE
+    } //fim funÃ§Ã£o printDANFE
     
     
     /**
@@ -878,25 +879,25 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
                 $tPagNome = 'Cheque';
                 break;
             case '03':
-                $tPagNome = 'Cartão de Crédito';
+                $tPagNome = 'CartÃ£o de CrÃ©dito';
                 break;
             case '04':
-                $tPagNome = 'Cartão de Débito';
+                $tPagNome = 'CartÃ£o de DÃ©bito';
                 break;
             case '05':
-                $tPagNome = 'Crédito Loja';
+                $tPagNome = 'CrÃ©dito Loja';
                 break;
             case '10':
-                $tPagNome = 'Vale Alimentação';
+                $tPagNome = 'Vale AlimentaÃ§Ã£o';
                 break;
             case '11':
-                $tPagNome = 'Vale Refeição';
+                $tPagNome = 'Vale RefeiÃ§Ã£o';
                 break;
             case '12':
                 $tPagNome = 'Vale Presente';
                 break;
             case '13':
-                $tPagNome = 'Vale Combustível';
+                $tPagNome = 'Vale CombustÃ­vel';
                 break;
             case '99':
                 $tPagNome = 'Outros';
@@ -937,7 +938,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
         $idToken = '000001',
         $token = ''
     ) {
-        $nVersao = '100'; //versão do QRCode
+        $nVersao = '100'; //versÃ£o do QRCode
         
         $dhHex = self::str2Hex($dhEmi);
         $digHex = self::str2Hex($digVal);
@@ -955,7 +956,7 @@ class Danfce1 extends CommonNFePHP implements DocumentoNFePHP
         $seq .= '&digVal=' . strtolower($digHex);
         $seq .= '&cIdToken=' . $idToken;
 
-        //o hash code é calculado com o Token incluso
+        //o hash code Ã© calculado com o Token incluso
         $hash = sha1($seq.$token);
         $seq .= '&cHashQRCode='. strtoupper($hash);
         if (strpos($url, '?') === false) {

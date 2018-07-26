@@ -1,7 +1,5 @@
 <?php
-
 namespace NFePHP\Extras;
-
 /**
  * Classe para a impressão em PDF do Docuimento Auxiliar de NFe Consumidor
  *
@@ -16,23 +14,18 @@ namespace NFePHP\Extras;
  *            Roberto L. Machado <linux dot rlm at gmail dot com>
  *            Mario Almeida <mario at grupopmz dot com dot br>
  */
-
-
 //define o caminho base da instalação do sistema
 if (!defined('PATH_ROOT')) {
     define('PATH_ROOT', dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
 }
-
 //ajuste do tempo limite de resposta do processo
 set_time_limit(1800);
-
 //classes utilizadas
 use mPDF;
 use Endroid\QrCode\QrCode;
 use NFePHP\Extras\CommonNFePHP;
 use NFePHP\Extras\DocumentoNFePHP;
 use NFePHP\Extras\DomDocumentNFePHP;
-
 /**
  * Classe DanfceNFePHP
  * Objetivo - impressão de NFC-e em uma unica pagina (bobina)
@@ -43,7 +36,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
     public $idToken;
     public $emitToken;
     public $papel;
-    
+
     //privadas
     protected $xml; // string XML NFe
     protected $logomarca=''; // path para logomarca em jpg
@@ -172,7 +165,6 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         '51' => 'http://www.sefaz.mt.gov.br/nfce/consultanfce',
         '53' => 'http://dec.fazenda.df.gov.br/NFCE/'
     ); // URL's conforme manual DANFE NFC-e 4.1 página 9 item 3.1.4 (site http://nfce.encat.org/consumidor/consulte-sua-nota/)
-
     /**
      * __contruct
      *
@@ -198,7 +190,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         }
         $this->papel = array(80, 'one-page');
         $this->xml          = $docXML;
-        
+
         $this->logomarca    = $sPathLogo;
         if (!empty($this->xml)) {
             $this->dom = new DomDocumentNFePHP();
@@ -232,7 +224,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
             $this->infAdFisco = $this->dom->getElementsByTagName("infAdFisco")->item(0)->nodeValue;
         }
     }
-    
+
     /**
      * Returns idToken
      *
@@ -242,7 +234,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
     {
         return $this->idToken;
     }
-    
+
     /**
      * Set idToken
      *
@@ -252,7 +244,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
     {
         $this->idToken = $str;
     }
-    
+
     /**
      * Returns emitToken
      *
@@ -262,7 +254,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
     {
         return $this->emitToken;
     }
-    
+
     /**
      * Set emitTokem
      *
@@ -272,7 +264,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
     {
         $this->emitToken = $str;
     }
-    
+
     /**
      * Return paper size
      *
@@ -282,7 +274,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
     {
         return $this->papel;
     }
-    
+
     /**
      * Set papaer size
      *
@@ -292,7 +284,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
     {
         $this->papel = $aPap;
     }
-    
+
     /**
      * Check if exist data to print
      *
@@ -305,7 +297,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         }
         return true;
     }
-    
+
     /**
      * monta
      *
@@ -319,7 +311,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
     {
         return $this->montaDANFCE($ecoNFCe);
     }
-    
+
     /**
      * printDocument
      *
@@ -332,7 +324,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
     {
         return $this->printDANFCE($nome, $destino, $printer);
     }
-    
+
     /**
      * o objetivo desta função é ler o XML e gerar o DANFE NFC-e com auxilio de conversão HTML-PDF
      *
@@ -392,14 +384,14 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         $cDest  = '';
         if (isset($this->dest)) {
             $considEstrangeiro = !empty($this->dest->getElementsByTagName("idEstrangeiro")->item(0)->nodeValue)
-                    ? $this->dest->getElementsByTagName("idEstrangeiro")->item(0)->nodeValue
-                    : '';
+                ? $this->dest->getElementsByTagName("idEstrangeiro")->item(0)->nodeValue
+                : '';
             $consCPF = !empty($this->dest->getElementsByTagName("CPF")->item(0)->nodeValue)
-                    ? $this->dest->getElementsByTagName("CPF")->item(0)->nodeValue
-                    : '';
+                ? $this->dest->getElementsByTagName("CPF")->item(0)->nodeValue
+                : '';
             $consCNPJ = !empty($this->dest->getElementsByTagName("CNPJ")->item(0)->nodeValue)
-                    ? $this->dest->getElementsByTagName("CNPJ")->item(0)->nodeValue
-                    : '';
+                ? $this->dest->getElementsByTagName("CNPJ")->item(0)->nodeValue
+                : '';
             $cDest = $consCPF.$consCNPJ.$considEstrangeiro; //documentos do consumidor
         }
         //DADOS PARA QRCODE
@@ -428,22 +420,22 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         $tsProt = $this->pConvertTime($dhRecbto);
         //$valorProdutos = number_format($vProd, 2, ",", ".");
         //$valorTotal = number_format($vNF, 2, ",", ".");
-        
+
         /*
-         * Leiaute de Impressão DANFE NFC-e em acordo com 
+         * Leiaute de Impressão DANFE NFC-e em acordo com
          * Manual Padrões Técnicos do DANFE-NFC-e e QR Code
          * Versão 3.4
          * Outubro 2015
          * Refatorado por: Chinnon Santos - 05/2016
         */
-        
+
         /*
          * Correções do layout
          * Versão 4.1
          * Dezembro 2016
          * Corrigido por Emerson Diego Feltrin 01/2017
          */
-        
+
         $this->html = "";
         $this->html .= "<html>\n";
         $this->html .= "<head>\n";
@@ -451,29 +443,29 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         $this->html .= $this->css;
         $this->html .= "</head>\n";
         $this->html .= "<body>\n";
-        
+
         // ***                                                    ***//
         // *** Via Única ou Via do Consumidor em Modo Contigência ***//
         // ***                                                    ***//
-        
+
         // -- Divisão I - Informações do Cabeçalho
         $this->html .= "<table width=\"100%\">\n";
         $this->html .= "<tr>\n";
         $this->html .= "<td><img src=\"$this->logomarca\" width=\"82\" ></td>\n";
         $this->html .= "<td colspan=\"2\">".htmlspecialchars($emitRazao)."<br>CNPJ:$emitCnpj I.E.:$emitIE<br>".
-                htmlspecialchars($emitLgr . ", nº" . $emitNro). "<br>".
-                htmlspecialchars($emitCpl) . "<br>".
-                htmlspecialchars($emitBairro . ", " . $emitMun . ", " . $emitUF) . "<br>CEP: $emitCEP $emitFone</td>\n";
+            htmlspecialchars($emitLgr . ", nº" . $emitNro). "<br>".
+            htmlspecialchars($emitCpl) . "<br>".
+            htmlspecialchars($emitBairro . ", " . $emitMun . ", " . $emitUF) . "<br>CEP: $emitCEP $emitFone</td>\n";
         $this->html .= "</tr>\n";
         $this->html .= "</table>\n";
-        
+
         $this->html .= "<table width=\"100%\">\n";
         $this->html .= "<tr>\n";
         $this->html .= "<td colspan=\"3\" class=\"tCenter\"><strong>".
-                htmlspecialchars("DANFE NFC-e - DOCUMENTO AUXILIAR DA NOTA FISCAL DE CONSUMIDOR ELETRÔNICA")."</strong></td>\n";
+            htmlspecialchars("DANFE NFC-e - DOCUMENTO AUXILIAR DA NOTA FISCAL DE CONSUMIDOR ELETRÔNICA")."</strong></td>\n";
         $this->html .= "</tr>\n";
         $this->html .= "</table>\n";
-        
+
         // -- Divisão VIII – Área de Mensagem Fiscal
         // -- Essa parte da divisão precisa ficar aqui e antes do QR Code
         if ($tpEmis != 1) {
@@ -487,12 +479,12 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
             $this->html .= "</tr>\n";
             $this->html .= "</table>\n";
         }
-        
+
         // -- Divisão II – Informações de detalhes de produtos/serviços
         if (! $ecoNFCe) {
             $this->html .= self::itens($this->det);
         }
-        
+
         // -- Divisão III – Informações de Totais do DANFE NFC-e
         $this->html .= "<table width=\"100%\">\n";
         $this->html .= "<tr>\n";
@@ -534,9 +526,9 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         $this->html .= "<th class=\"tLeft\">FORMA DE PAGAMENTO</th>\n";
         $this->html .= "<th class=\"tRight\">VALOR PAGO</th>\n";
         $this->html .= "</tr>\n";
-        $this->html .= self::pagamento($this->pag);        
+        $this->html .= self::pagamento($this->pag);
         $this->html .= "</table>\n";
-        
+
         // -- Divisão IV – Informações da consulta via chave de acesso
         $this->html .= "<table width=\"100%\">\n";
         $this->html .= "<tr>\n";
@@ -549,10 +541,10 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         $this->html .= "<td colspan=\"3\">{$chNFe}</td>\n";
         $this->html .= "</tr>\n";
         $this->html .= "</table>\n";
-        
+
         // -- Divisão VI – Informações sobre o Consumidor
         $this->html .= self::consumidor($this->dest);
-        
+
         // -- Divisão VII – Informações de Identificação da NFC-e e do Protocolo de Autorização
         $this->html .= "<table width=\"100%\">\n";
         $this->html .= "<tr>\n";
@@ -573,7 +565,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
             $this->html .= "</tr>\n";
         }
         $this->html .= "</table>\n";
-        
+
         // -- Divisão VIII – Área de Mensagem Fiscal
         $this->html .= "<table width=\"100%\">\n";
         if ($tpEmis != 1) {
@@ -600,19 +592,19 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
             $this->html .= "</tr>\n";
         }
         $this->html .= "</table>\n";
-        
+
         // -- Divisão V – Informações da consulta via QR Code
         $this->html .= "<table width=\"100%\">\n";
         $this->html .= "<tr>\n";
         $this->html .= "<td colspan=\"3\"><img src=\"{$this->imgQRCode}\" ></td>\n";
         $this->html .= "</tr>\n";
         $this->html .= "</table>\n";
-        
+
         // -- Divisão IX – Mensagem de Interesse do Contribuinte
         $this->html .= "<table width=\"100%\">\n";
         $this->html .= "<tr>\n";
         $this->html .= "<td colspan=\"3\" class=\"tCenter\">Tributos totais incidentes (Lei Federal 12.741/2012) " . number_format($vTotTrib, 2, ',', '.') . "</td>\n";
-        $this->html .= "</tr>\n";        
+        $this->html .= "</tr>\n";
         $this->html .= "</table>\n";
         $this->html .= "<table width=\"100%\" class=\"noBorder\">\n";
         $this->html .= "<tr>\n";
@@ -622,7 +614,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         $this->html .= "<td colspan=\"3\" class=\"rodape tCenter\">" . str_replace(";", "<br>", $rodape) . "</td>\n";
         $this->html .= "</tr>\n";
         $this->html .= "</table>\n";
-        
+
         // ***                                            ***//
         // *** Via do Estabelecimento em Modo Contigência ***//
         // ***                                            ***//
@@ -631,11 +623,11 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
             $this->html .= "<br><hr><br>\n";
             $this->html .= $html2via;
         }
-        
+
         $this->html .= "</body>\n</html>\n";
         return $id;
     }
-    
+
     /**
      * Make pagamento block
      *
@@ -671,7 +663,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         } //fim foreach
         return $pagHtml;
     }
-    
+
     /**
      * Returns card operator name
      *
@@ -700,7 +692,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         }
         return $tBandNome;
     }
-    
+
     /**
      * Returns type of payment
      *
@@ -742,7 +734,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         }
         return $tPagNome;
     }
-    
+
     /**
      * Make itens block
      *
@@ -793,7 +785,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         $itensHtml .= "</table>\n";
         return $itensHtml;
     }
-    
+
     /**
      * Make consumidor block
      *
@@ -827,34 +819,33 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
             $consCNPJ = $this->pSimpleGetValue($dest, "CNPJ");
             $consCPF = $this->pSimpleGetValue($dest, "CPF");
             $considEstrangeiro = $this->pSimpleGetValue($dest, "idEstrangeiro");
-            
+
             //CNPJ, CPF ou ID Estrageiro
             if (!empty($consCNPJ)) {
                 $consCNPJ = $this->pFormat($consCNPJ, "##.###.###/####-##");
                 $consHtml .= "<tr><td colspan=\"3\">CONSUMIDOR CNPJ: {$consCNPJ} ".
-                        htmlspecialchars($consNome)."</td></tr>\n";
+                    htmlspecialchars($consNome)."</td></tr>\n";
             } elseif (!empty($consCPF)) {
                 $consCPF = $this->pFormat($consCPF, "###.###.###-##");
                 $consHtml .= "<tr><td colspan=\"3\">CONSUMIDOR CPF: {$consCPF} ".
-                        htmlspecialchars($consNome)."</td></tr>\n";
+                    htmlspecialchars($consNome)."</td></tr>\n";
             } elseif (!empty($considEstrangeiro)) {
                 $consHtml .= "<tr><td colspan=\"3\">CONSUMIDOR Id. Estrangeiro: {$considEstrangeiro} ".
-                        htmlspecialchars($consNome)."</td></tr>\n";
+                    htmlspecialchars($consNome)."</td></tr>\n";
             }
             if (!empty($consLgr)&&!empty($consBairro)&&!empty($consMun)&&!empty($consUF)) {
                 $consHtml .= "<tr>\n";
                 $consHtml .= "<td colspan=\"3\">".
-                        htmlspecialchars("{$consLgr}, {$consNro}, {$consCpl}, {$consBairro}")."<br>\n".
-                        htmlspecialchars("{$consMun}-{$consUF}")."<br>\n".
-                        htmlspecialchars("CEP: {$consCEP} - Tel.: {$consFone}")."</td>\n";
+                    htmlspecialchars("{$consLgr}, {$consNro}, {$consCpl}, {$consBairro}")."<br>\n".
+                    htmlspecialchars("{$consMun}-{$consUF}")."<br>\n".
+                    htmlspecialchars("CEP: {$consCEP} - Tel.: {$consFone}")."</td>\n";
                 $consHtml .= "</tr>\n";
             }
         }
         $consHtml .= "</table>\n";
-        
+
         return $consHtml;
     }
-
     /**
      * Print DANFCE
      *
@@ -881,7 +872,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         }
         return true;
     }
-    
+
     /**
      * str2Hex
      * Converte string para haxadecimal ASCII
@@ -902,7 +893,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         } while ($iCount < strlen($str));
         return $hex;
     }
-    
+
     /**
      * hex2Str
      * Converte hexadecimal ASCII para string
@@ -923,7 +914,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         } while ($iCount < strlen($str));
         return $bin;
     }
-    
+
     /**
      * Mount QRCode URL
      *
@@ -976,7 +967,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         }
         return self::imgQR($seq);
     }
-    
+
     /**
      * Save QRCode image and returns path to file
      *
@@ -998,13 +989,13 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
             ->setLabel('')
             ->setLabelFontSize(16);
         $img = $qrCode->get();
-        
+
         //Retorno src em Base64 para melhor utilização em ambos os formatos (PDF/HTML)
         //evita falhas de endereço da imagem e reduz o I/O no disco porém
         //aumenta o uso de memoria do servidor...
         $src = "data: image/png;base64,".base64_encode($img);
         return $src;
-        
+
         //$filename = PATH_ROOT.'../images/'.date('YmdHis').'.jpg';
         //file_put_contents($filename, $img);
         //return $filename;

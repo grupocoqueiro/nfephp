@@ -2,9 +2,7 @@
 
 namespace NFePHP\Extras\FPDF;
 
-if (!defined('FPDF_VERSION')) {
-    define('FPDF_VERSION', '1.6');
-}
+define('FPDF_VERSION', '1.6');
 
 class FPDF
 {
@@ -1028,6 +1026,7 @@ class FPDF
         }
         switch ($dest) {
             case 'I':
+            	
                 //Send to standard output
                 if (ob_get_length()) {
                     $this->Error('Some data has already been output, can\'t send PDF file');

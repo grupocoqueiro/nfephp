@@ -3,7 +3,7 @@
 namespace NFePHP\NFe;
 
 /**
- * Classe para a identificaÃ§Ã£o do documento eletrÃ´nico da NFe
+ * Classe para a identificação do documento eletrônico da NFe
  *
  * @category  NFePHP
  * @package   NFePHP\NFe\IdentifyNFe
@@ -42,10 +42,11 @@ class IdentifyNFe
         );
         Identify::setListSchemesId($aList);
         $schem = Identify::identificacao($xml, $aResp);
+
         $dom = $aResp['dom'];
         $node = $dom->getElementsByTagName($aResp['tag'])->item(0);
         if ($schem == 'nfe') {
-            //se for um nfe entÃ£o Ã© necessÃ¡rio pegar a versÃ£o
+            //se for um nfe então é necessário pegar a versão
             // em outro node infNFe
             $node1 = $dom->getElementsByTagName('infNFe')->item(0);
             $versao = $node1->getAttribute('versao');

@@ -3,7 +3,7 @@
 namespace NFePHP\Common\Certificate;
 
 /**
- * Classe auxiliar para obter informaÃ§Ãµes dos certificados digitais A1 (PKCS12)
+ * Classe auxiliar para obter informações dos certificados digitais A1 (PKCS12)
  *
  * @category  NFePHP
  * @package   NFePHP\Common\Certificate
@@ -27,13 +27,14 @@ class Asn extends Base
     /**
      * getCNPJCert
      *
-     * ObtÃªm o numero de CNPJ da chave publica do Certificado (A1)
+     * Obtêm o numero de CNPJ da chave publica do Certificado (A1)
      *
-     * @param  string $certpem conteÃºdo do certificado
+     * @param  string $certpem conteúdo do certificado
      * @return string CNPJ
      */
     public static function getCNPJCert($certPem)
     {
+
         $certDer = self::pem2Der((string) $certPem);
         $data = self::getOIDdata((string) $certDer, '2.16.76.1.3.3');
         return (string) $data[0][1][1][0][1];
@@ -41,8 +42,8 @@ class Asn extends Base
     
     /**
      * getOIDdata
-     * Recupera a informaÃ§Ã£o referente ao OID contido no certificado
-     * Este mÃ©todo assume que a OID estÃ¡ inserida dentro de uma estrutura do
+     * Recupera a informação referente ao OID contido no certificado
+     * Este método assume que a OID está inserida dentro de uma estrutura do
      * tipo "sequencia", como primeiro elemento da estrutura
      *
      * @param  string $certDer
@@ -54,33 +55,33 @@ class Asn extends Base
         //converte onumero OTD de texto para hexadecimal
         $oidHexa = self::oidtoHex((string) $oidNumber);
         //Divide o certificado usando a OID como marcador,uma antes do OID e outra contendo o OID.
-        //Normalmente o certificado serÃ¡ dividido em duas partes, pois em geral existe
+        //Normalmente o certificado será dividido em duas partes, pois em geral existe
         //apenas um OID de cada tipo no certificado, mas podem haver mais.
         $partes = explode($oidHexa, $certDer);
         $ret = array();
-        //se count($partes) > 1 entÃ£o o OID foi localizado no certificado
+        //se count($partes) > 1 então o OID foi localizado no certificado
         $tot = count($partes);
         if ($tot > 1) {
             //O inicio da sequencia que nos interessa pode estar a 3 ou 2 digitos
             //antes do inicio da OID, isso depende do numero de bytes usados para
             //identificar o tamanho da sequencia
             for ($i = 1; $i < $tot; $i++) {
-                //recupera da primeira parte os 4 Ãºltimos digitos na parte sem o OID
+                //recupera da primeira parte os 4 últimos digitos na parte sem o OID
                 $xcv4 = substr($partes[$i-1], strlen($partes[$i-1])-4, 4);
                 //recupera da primeira parte os 3 ultimos digitos na parte sem o OID
                 $xcv3 = substr($partes[$i-1], strlen($partes[$i-1])-3, 3);
                 //recupera da primeira parte os 2 ultimos digitos na parte em o OID
                 $xcv2 = substr($partes[$i-1], strlen($partes[$i-1])-2, 2);
-                //verifica se o primeiro digito Ã© Hex 030
+                //verifica se o primeiro digito é Hex 030
                 if ($xcv4[0] == chr(0x30)) {
-                    //se for, entÃ£o tamanho Ã© definido por esses 4 bytes
+                    //se for, então tamanho é definido por esses 4 bytes
                     $xcv = $xcv4;
                 } else {
-                    //se for, entÃ£o tamanho Ã© definido por esses 3 bytes
+                    //se for, então tamanho é definido por esses 3 bytes
                     if ($xcv3[0] == chr(0x30)) {
                         $xcv = $xcv3;
                     } else {
-                        //entÃ£o tamanho Ã© definido por esses 2 bytes
+                        //então tamanho é definido por esses 2 bytes
                         $xcv = $xcv2;
                     }
                 }
@@ -103,11 +104,11 @@ class Asn extends Base
 
     /**
      * parseASN
-     * Retorna a informaÃ§Ã£o requerida do certificado
+     * Retorna a informação requerida do certificado
      *
      * @param  string  $data             bloco de dados do certificado a ser traduzido
      * @param  boolean $contextEspecific
-     * @return array com o dado do certificado jÃ¡ traduzido
+     * @return array com o dado do certificado já traduzido
      */
     protected static function parseASN($data, $contextEspecific = false)
     {
@@ -259,7 +260,7 @@ class Asn extends Base
                     $value = ($value << 8) | ord($integerData[$i]);
                 }
             } else {
-                // metodo trabalha com inteiros arbritrÃ¡rios
+                // metodo trabalha com inteiros arbritrários
                 if (extension_loaded('bcmath')) {
                     for ($i = 0; $i < strlen($integerData); $i++) {
                         $value = bcadd(bcmul($value, 256), ord($integerData[$i]));

@@ -52,6 +52,7 @@ class Identify
         } elseif (is_file($xml)) {
             $xml = FilesFolders::readFile($xml);
         }
+        
         $dom = new Dom('1.0', 'utf-8');
         $dom->loadXMLString($xml);
         $key = '';
@@ -59,6 +60,7 @@ class Identify
         if ($schId == '') {
             return '';
         }
+      
         $chave = '';
         $tpAmb = '';
         $dhEmi = '';
@@ -84,6 +86,7 @@ class Identify
         $aResp['chave'] = $chave;
         $aResp['tpAmb'] = $tpAmb;
         $aResp['dhEmi'] = $dhEmi;
+
         return $schId;
     }
     
