@@ -16,7 +16,6 @@
         "ext-iconv": "*",
         "ext-mbstring": "*",
         "soundasleep/html2text": "~0.2",
-        "mpdf/mpdf": "6.0.0",
         "endroid/qrcode": "1.*@dev"
     },
     "require-dev": {
