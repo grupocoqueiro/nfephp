@@ -20,15 +20,12 @@ use NFePHP\Common\Strings\Strings;
 use NFePHP\Common\Files;
 use NFePHP\Common\Exception;
 use NFePHP\Common\Dom\Dom;
-use NFePHP\NFe\ReturnNFe;
-use NFePHP\NFe\MailNFe;
-use NFePHP\NFe\IdentifyNFe;
 use NFePHP\Common\Dom\ValidXsd;
 use NFePHP\Extras;
 use App\Exception\UserException;
 
 if (!defined('NFEPHP_ROOT')) {
-    define('NFEPHP_ROOT', dirname(dirname(dirname(__FILE__))));
+    define('NFEPHP_ROOT', dirname(__FILE__, 3));
 }
 
 class ToolsNFe extends BaseTools
@@ -1573,11 +1570,11 @@ class ToolsNFe extends BaseTools
             throw new Exception\RuntimeException($msg);
         }
         $aRetorno = array();
-        $cnpj = $this->aConfig['cnpj'];
+        $tpEvento = '110140'; //EPEC
         $aRet = $this->zTpEv($tpEvento);
+        $cnpj = $this->aConfig['cnpj'];
         $descEvento = $aRet['desc'];
         $cOrgao = '91';
-        $tpEvento = '110140'; //EPEC
         $datEv = '';
         $numLote = LotNumber::geraNumLote();
         foreach ($aXml as $xml) {
@@ -1588,8 +1585,8 @@ class ToolsNFe extends BaseTools
                 throw new Exception\InvalidArgumentException($msg);
             }
             $sSeqEvento = str_pad('1', 2, "0", STR_PAD_LEFT);
-            $eventId = "ID".$tpEvento.$chNFe.$sSeqEvento;
             $chNFe = $dat['chave'];
+            $eventId = "ID".$tpEvento.$chNFe.$sSeqEvento;
             $dhEvento = DateTime::convertTimestampToSefazTime();
             $mensagem = "<evento xmlns=\"$this->urlPortal\" versao=\"$this->urlVersion\">"
                 . "<infEvento Id=\"$eventId\">"
@@ -2306,7 +2303,7 @@ class ToolsNFe extends BaseTools
         $hex = "";
         $iCount = 0;
         do {
-            $hex .= sprintf("%02x", ord($str{$iCount}));
+            $hex .= sprintf("%02x", ord($str[$iCount]));
             $iCount++;
         } while ($iCount < strlen($str));
         return $hex;

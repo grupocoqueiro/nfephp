@@ -2,7 +2,7 @@
     "name": "grupocoqueiro/nfephp",
     "license": ["GPL-3.0+","LGPL-3.0+"],
     "require": {
-        "php": ">=5.5.0",
+        "php": "^8.3",
         "ext-dom": "*",
         "ext-xml": "*",
         "ext-libxml": "*",
@@ -19,7 +19,7 @@
         "endroid/qrcode": "1.*@dev"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7"
+        "phpunit/phpunit": "^11.5"
     },
     "autoload": {
         "psr-4": {
