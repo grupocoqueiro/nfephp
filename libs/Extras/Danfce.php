@@ -489,7 +489,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         $this->html .= "<table width=\"100%\">\n";
         $this->html .= "<tr>\n";
         $this->html .= "<td class=\"tLeft\">Qtde. Total de Itens</td>\n";
-        $this->html .= "<td class=\"tRight\">{$qtdItens}</td>\n";
+        $this->html .= "<td class=\"tRight\">$qtdItens</td>\n";
         $this->html .= "</tr>\n";
         $this->html .= "<tr>\n";
         $this->html .= "<td class=\"tLeft\">".htmlspecialchars('Valor Total R$')."</td>\n";
@@ -538,7 +538,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         $this->html .= "<td colspan=\"3\"><a href=\"$urlQR\">$urlQR</a></td>\n";
         $this->html .= "</tr>\n";
         $this->html .= "<tr>\n";
-        $this->html .= "<td colspan=\"3\">{$chNFe}</td>\n";
+        $this->html .= "<td colspan=\"3\">$chNFe</td>\n";
         $this->html .= "</tr>\n";
         $this->html .= "</table>\n";
 
@@ -558,7 +558,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         $this->html .= "</tr>\n";
         if ($tpEmis == 1) {
             $this->html .= "<tr>\n";
-            $this->html .= "<td colspan=\"3\"><strong>Protocolo de autorização:</strong> {$nProt}</td>\n";
+            $this->html .= "<td colspan=\"3\"><strong>Protocolo de autorização:</strong> $nProt</td>\n";
             $this->html .= "</tr>\n";
             $this->html .= "<tr>\n";
             $this->html .= "<td colspan=\"3\"><strong>Data de autorização:</strong> " . date('d/m/y H:i:s', $tsProt) . "</td>\n";
@@ -596,7 +596,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         // -- Divisão V – Informações da consulta via QR Code
         $this->html .= "<table width=\"100%\">\n";
         $this->html .= "<tr>\n";
-        $this->html .= "<td colspan=\"3\"><img src=\"{$this->imgQRCode}\" ></td>\n";
+        $this->html .= "<td colspan=\"3\"><img src=\"$this->imgQRCode\" ></td>\n";
         $this->html .= "</tr>\n";
         $this->html .= "</table>\n";
 
@@ -608,7 +608,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         $this->html .= "</table>\n";
         $this->html .= "<table width=\"100%\" class=\"noBorder\">\n";
         $this->html .= "<tr>\n";
-        $this->html .= "<td colspan=\"3\" class=\"menor tCenter\"><strong>{$this->infCpl}</strong></td>\n";
+        $this->html .= "<td colspan=\"3\" class=\"menor tCenter\"><strong>$this->infCpl</strong></td>\n";
         $this->html .= "</tr>\n";
         $this->html .= "<tr>\n";
         $this->html .= "<td colspan=\"3\" class=\"rodape tCenter\">" . str_replace(";", "<br>", $rodape) . "</td>\n";
@@ -651,13 +651,13 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
                 $tBand     = $this->pSimpleGetValue($card, "tBand");
                 $tBandNome = self::getCardName($tBand);
                 $pagHtml .= "<tr>\n";
-                $pagHtml .= "<td class=\"tLeft\">".htmlspecialchars($tPagNome)." ({$tBandNome})</td>\n";
-                $pagHtml .= "<td class=\"tRight\">{$vPag}</td>\n";
+                $pagHtml .= "<td class=\"tLeft\">".htmlspecialchars($tPagNome)." ($tBandNome)</td>\n";
+                $pagHtml .= "<td class=\"tRight\">$vPag</td>\n";
                 $pagHtml .= "</tr>\n";
             } else {
                 $pagHtml .= "<tr>\n";
                 $pagHtml .= "<td class=\"tLeft\">".htmlspecialchars($tPagNome)."</td>\n";
-                $pagHtml .= "<td class=\"tRight\">{$vPag}</td>\n";
+                $pagHtml .= "<td class=\"tRight\">$vPag</td>\n";
                 $pagHtml .= "</tr>\n";
             }
         } //fim foreach
@@ -823,22 +823,22 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
             //CNPJ, CPF ou ID Estrageiro
             if (!empty($consCNPJ)) {
                 $consCNPJ = $this->pFormat($consCNPJ, "##.###.###/####-##");
-                $consHtml .= "<tr><td colspan=\"3\">CONSUMIDOR CNPJ: {$consCNPJ} ".
+                $consHtml .= "<tr><td colspan=\"3\">CONSUMIDOR CNPJ: $consCNPJ ".
                     htmlspecialchars($consNome)."</td></tr>\n";
             } elseif (!empty($consCPF)) {
                 $consCPF = $this->pFormat($consCPF, "###.###.###-##");
-                $consHtml .= "<tr><td colspan=\"3\">CONSUMIDOR CPF: {$consCPF} ".
+                $consHtml .= "<tr><td colspan=\"3\">CONSUMIDOR CPF: $consCPF ".
                     htmlspecialchars($consNome)."</td></tr>\n";
             } elseif (!empty($considEstrangeiro)) {
-                $consHtml .= "<tr><td colspan=\"3\">CONSUMIDOR Id. Estrangeiro: {$considEstrangeiro} ".
+                $consHtml .= "<tr><td colspan=\"3\">CONSUMIDOR Id. Estrangeiro: $considEstrangeiro ".
                     htmlspecialchars($consNome)."</td></tr>\n";
             }
             if (!empty($consLgr)&&!empty($consBairro)&&!empty($consMun)&&!empty($consUF)) {
                 $consHtml .= "<tr>\n";
                 $consHtml .= "<td colspan=\"3\">".
-                    htmlspecialchars("{$consLgr}, {$consNro}, {$consCpl}, {$consBairro}")."<br>\n".
-                    htmlspecialchars("{$consMun}-{$consUF}")."<br>\n".
-                    htmlspecialchars("CEP: {$consCEP} - Tel.: {$consFone}")."</td>\n";
+                    htmlspecialchars("$consLgr, $consNro, $consCpl, $consBairro")."<br>\n".
+                    htmlspecialchars("$consMun-$consUF")."<br>\n".
+                    htmlspecialchars("CEP: $consCEP - Tel.: $consFone")."</td>\n";
                 $consHtml .= "</tr>\n";
             }
         }
@@ -888,7 +888,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         $hex = "";
         $iCount = 0;
         do {
-            $hex .= sprintf("%02x", ord($str{$iCount}));
+            $hex .= sprintf("%02x", ord($str[$iCount]));
             $iCount++;
         } while ($iCount < strlen($str));
         return $hex;
@@ -909,7 +909,7 @@ class Danfce extends CommonNFePHP implements DocumentoNFePHP
         $bin = "";
         $iCount = 0;
         do {
-            $bin .= chr(hexdec($str{$iCount}.$str{($iCount + 1)}));
+            $bin .= chr(hexdec($str[$iCount] .$str[($iCount + 1)]));
             $iCount += 2;
         } while ($iCount < strlen($str));
         return $bin;
